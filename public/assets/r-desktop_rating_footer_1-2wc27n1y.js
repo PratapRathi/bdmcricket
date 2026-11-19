@@ -1,0 +1,1 @@
+(window.__pdR = window.__pdR || {})["https://www.bdmcricket.net/cgi/desktop_rating_footer_1.php"] = ["text/html", "CjwhLS0gPHNjcmlwdCB0eXBlPSJ0ZXh0L2phdmFzY3JpcHQiPgp2YXIgcmF0aW5nc0RhdGEgPSA7Cjwvc2NyaXB0PiAtLT4K"];

@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { sitePages } from "./data/company";
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -11,6 +12,15 @@ const nextConfig: NextConfig = {
         as: "*.css",
       },
     },
+  },
+  async rewrites() {
+    return [
+      { source: "/index.html", destination: "/" },
+      ...sitePages.map((slug) => ({
+        source: `/${slug}.html`,
+        destination: `/${slug}`,
+      })),
+    ];
   },
 };
 
