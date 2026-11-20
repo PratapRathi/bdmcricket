@@ -1,0 +1,181 @@
+{
+  "categories": [
+    {
+      "slug": "bats",
+      "name": "Bats",
+      "description": "Kashmir willow, English willow, and training bats from the BDM range.",
+      "subcategories": [
+        {
+          "slug": "kashmir-willow-bats",
+          "name": "Kashmir Willow Bats",
+          "description": "Bats made from Kashmir (Indian) willow."
+        },
+        {
+          "slug": "english-willow-bats",
+          "name": "English Willow Bats",
+          "description": "English willow bats for club and match play."
+        },
+        {
+          "slug": "other-bats",
+          "name": "Other Bats",
+          "description": "Synthetic, plastic, and miniature cricket bats."
+        }
+      ]
+    },
+    {
+      "slug": "balls",
+      "name": "Balls",
+      "description": "Red and white leather cricket balls for practice and match play.",
+      "subcategories": [
+        {
+          "slug": "white-leather-balls",
+          "name": "White Leather Balls",
+          "description": "White leather cricket balls."
+        },
+        {
+          "slug": "red-leather-balls",
+          "name": "Red Leather Balls",
+          "description": "Red leather cricket balls."
+        }
+      ]
+    },
+    {
+      "slug": "kit-bag",
+      "name": "Kit Bag",
+      "description": "Cricket kit bags and complete kits for carrying and organizing equipment.",
+      "subcategories": [
+        {
+          "slug": "kit-bags",
+          "name": "Kit Bags",
+          "description": "Cricket bags in a range of styles and sizes."
+        },
+        {
+          "slug": "cricket-kits",
+          "name": "Cricket Kits",
+          "description": "Complete cricket kit selections."
+        }
+      ]
+    },
+    {
+      "slug": "protective-gear",
+      "name": "Protective Gear",
+      "description": "Protective equipment for batters and wicket keepers.",
+      "subcategories": [
+        {
+          "slug": "batting-pads",
+          "name": "Batting Pad",
+          "description": "Leg protection for batters."
+        },
+        {
+          "slug": "batting-gloves",
+          "name": "Batting Gloves",
+          "description": "Gloves and inner gloves for batters."
+        },
+        {
+          "slug": "keeping-pads",
+          "name": "Keeping Pad",
+          "description": "Pads for wicket keepers."
+        },
+        {
+          "slug": "keeping-gloves",
+          "name": "Keeping Gloves",
+          "description": "Wicket-keeping gloves and inner gloves."
+        },
+        {
+          "slug": "elbow-guards",
+          "name": "Elbow Guard",
+          "description": "Protective elbow guards."
+        },
+        {
+          "slug": "thigh-guards",
+          "name": "Thigh Guard",
+          "description": "Protective thigh guards."
+        },
+        {
+          "slug": "helmets",
+          "name": "Helmet",
+          "description": "Cricket helmets for adults and junior players."
+        },
+        {
+          "slug": "chest-guards",
+          "name": "Chest Guard",
+          "description": "Protective chest guards."
+        },
+        {
+          "slug": "abdominal-guards",
+          "name": "Abdominal Guard",
+          "description": "Protective abdominal guards."
+        },
+        {
+          "slug": "supporters-bands",
+          "name": "Supporters & Bands",
+          "description": "Supporters and protective bands."
+        }
+      ]
+    },
+    {
+      "slug": "accessories",
+      "name": "Accessories",
+      "description": "Stumps, grips, training aids, and match-day accessories.",
+      "subcategories": [
+        {
+          "slug": "stumps-bails",
+          "name": "Stumps & Bails",
+          "description": "Cricket stumps and related equipment."
+        },
+        {
+          "slug": "training-accessories",
+          "name": "Training Accessories",
+          "description": "Training and umpiring aids."
+        },
+        {
+          "slug": "bat-grips",
+          "name": "Bat Grips",
+          "description": "Replacement grips for cricket bats."
+        }
+      ]
+    },
+    {
+      "slug": "clothing",
+      "name": "Clothing",
+      "description": "Cricket wear, hats, caps, and socks.",
+      "subcategories": [
+        {
+          "slug": "cricket-wear",
+          "name": "Cricket Wear",
+          "description": "Cricket clothing and whites."
+        },
+        {
+          "slug": "hats-caps",
+          "name": "Hats & Caps",
+          "description": "Cricket hats and caps."
+        },
+        {
+          "slug": "socks",
+          "name": "Socks",
+          "description": "Cricket socks."
+        }
+      ]
+    }
+  ],
+  "legacyCategoryRedirects": {
+    "cricket-bat": "/bats",
+    "bdm-english-willow-cricket-bat": "/bats#english-willow-bats",
+    "cricket-ball": "/balls",
+    "leather-cricket-ball": "/balls#red-leather-balls",
+    "cricket-batting-gloves": "/protective-gear#batting-gloves",
+    "wicket-keeping-gloves": "/protective-gear#keeping-gloves",
+    "cricket-wicketkeeping-gloves": "/protective-gear#keeping-gloves",
+    "cricket-batting-pad": "/protective-gear#batting-pads",
+    "cricket-wicketkeeping-pad": "/protective-gear#keeping-pads",
+    "cricket-helmet": "/protective-gear#helmets",
+    "cricket-kit-bag": "/kit-bag",
+    "cricket-protective-equipment": "/protective-gear",
+    "cricket-accessories": "/accessories",
+    "cricket-hat": "/clothing#hats-caps",
+    "white-cricket-wear": "/clothing#cricket-wear",
+    "cricket-battingpad-sportsacademy": "/protective-gear#batting-pads",
+    "cricket-equipments": "/accessories",
+    "cricket-equipment": "/products"
+  }
+}

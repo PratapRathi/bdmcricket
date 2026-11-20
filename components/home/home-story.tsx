@@ -2,36 +2,56 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRef } from "react";
+import { useRef, useSyncExternalStore } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { history } from "@/data/company";
+import { VerticalTimeline, VerticalTimelineElement } from "react-vertical-timeline-component";
+import type { Product } from "@/lib/catalog-types";
 import { ButtonLink } from "@/components/ui/button-link";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-const archiveImage = "/assets/01-500x500-mja3oz1o.jpg";
-const currentProductImage = "/assets/bdm-dynamic-power-super-cricket-bat-500x-omhzyo10.jpg";
+const subscribeToTimelineReady = () => () => {};
+const getTimelineReadySnapshot = () => true;
+const getServerTimelineReadySnapshot = () => false;
 
-export function HomeStory() {
+type Milestone = { year: string; title: string; detail: string };
+
+function MilestoneCopy({ item }: { item: Milestone }) {
+  return (
+    <>
+      <p className="story-timeline-year">{item.year}</p>
+      <h3 className="mt-3 font-display text-2xl font-semibold leading-tight tracking-[-0.045em] sm:text-3xl">{item.title}</h3>
+      <p className="mt-3 max-w-xl text-sm leading-7 text-white/55">{item.detail}</p>
+    </>
+  );
+}
+
+export function HomeStory({ history, storyImage, product }: { history: Milestone[]; storyImage: string; product: Product }) {
   const scope = useRef<HTMLElement>(null);
+  const timelineReady = useSyncExternalStore(
+    subscribeToTimelineReady,
+    getTimelineReadySnapshot,
+    getServerTimelineReadySnapshot,
+  );
 
   useGSAP(() => {
     const motion = gsap.matchMedia();
     motion.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
-      const rows = gsap.utils.toArray<HTMLElement>(".story-row", scope.current);
-      rows.forEach((row, index) => {
+      const entries = gsap.utils.toArray<HTMLElement>(".story-timeline-entry", scope.current);
+      const visual = scope.current?.querySelector<HTMLElement>(".story-visual-art");
+
+      entries.forEach((entry, index) => {
         ScrollTrigger.create({
-          trigger: row,
+          trigger: entry,
           start: "top 62%",
           end: "bottom 38%",
-          toggleClass: { targets: row, className: "is-active" },
+          toggleClass: { targets: entry, className: "is-active" },
         });
-        const visual = scope.current?.querySelector<HTMLElement>(".story-visual-art");
         if (index === history.length - 1 && visual) {
           ScrollTrigger.create({
-            trigger: row,
+            trigger: entry,
             start: "top 62%",
             end: "bottom 38%",
             toggleClass: { targets: visual, className: "is-product-stage" },
@@ -39,18 +59,8 @@ export function HomeStory() {
         }
       });
     });
-    motion.add("(max-width: 1023px) and (prefers-reduced-motion: no-preference)", () => {
-      gsap.fromTo(".story-row", { y: 18, autoAlpha: 0 }, {
-        y: 0,
-        autoAlpha: 1,
-        duration: 0.65,
-        stagger: 0.12,
-        ease: "power3.out",
-        scrollTrigger: { trigger: ".story-list", start: "top 88%", once: true },
-      });
-    });
     return () => motion.revert();
-  }, { scope });
+  }, { scope, dependencies: [timelineReady], revertOnUpdate: true });
 
   return (
     <section ref={scope} className="home-story-section section-pad bg-ink text-white">
@@ -58,8 +68,8 @@ export function HomeStory() {
         <div className="story-visual-column">
           <div className="story-visual">
             <div className="story-visual-art">
-              <Image src={archiveImage} alt="BDM House of Cricket company profile collage" fill sizes="(max-width: 1023px) 100vw, 44vw" className="story-image-layer story-image-archive object-cover mix-blend-multiply" />
-              <Image src={currentProductImage} alt="BDM cricket bat from the current catalogue" fill sizes="(max-width: 1023px) 100vw, 44vw" className="story-image-layer story-image-product object-contain mix-blend-multiply" />
+              <Image src={storyImage} alt="BDM House of Cricket company profile collage" fill sizes="(max-width: 1023px) 100vw, 44vw" className="story-image-layer story-image-archive object-cover mix-blend-multiply" />
+              <Image src={product.image} alt={product.name} fill sizes="(max-width: 1023px) 100vw, 44vw" className="story-image-layer story-image-product object-contain mix-blend-multiply" />
               <span className="story-visual-index" aria-hidden="true">BDM / 1925—NOW</span>
             </div>
             <div className="story-visual-caption"><span>House of Cricket</span><span>Meerut, India</span></div>
@@ -74,16 +84,32 @@ export function HomeStory() {
           </div>
 
           <div className="story-list mt-10 lg:mt-14">
-            {history.map((item, index) => (
-              <article key={item.year} className={`story-row ${index === 0 ? "is-active" : ""}`}>
-                <p className="story-year">{item.year}</p>
-                <div className="story-row-copy">
-                  <h3 className="font-display text-2xl font-semibold leading-tight tracking-[-0.045em] sm:text-3xl">{item.title}</h3>
-                  <p className="mt-3 max-w-xl text-sm leading-7 text-white/55">{item.detail}</p>
-                </div>
-                <span className="story-row-marker" aria-hidden="true">↗</span>
-              </article>
-            ))}
+            {timelineReady ? (
+              <VerticalTimeline animate layout="1-column-left" lineColor="rgba(255,255,255,.2)">
+                {history.map((item, index) => (
+                  <VerticalTimelineElement
+                    key={item.year}
+                    className={`story-timeline-entry ${index === 0 ? "is-active" : ""}`}
+                    contentStyle={{ background: "transparent", color: "#fff", boxShadow: "none" }}
+                    contentArrowStyle={{ display: "none" }}
+                    iconStyle={{ background: "#17191d", color: "#c91f32" }}
+                    icon={<span aria-hidden="true">✳</span>}
+                    textClassName="story-timeline-content"
+                  >
+                    <MilestoneCopy item={item} />
+                  </VerticalTimelineElement>
+                ))}
+              </VerticalTimeline>
+            ) : (
+              <div className="story-timeline-fallback" aria-label="Company milestones">
+                {history.map((item) => (
+                  <article key={item.year} className="story-timeline-fallback-entry">
+                    <span className="story-timeline-fallback-icon" aria-hidden="true">✳</span>
+                    <MilestoneCopy item={item} />
+                  </article>
+                ))}
+              </div>
+            )}
           </div>
           <div className="mt-8 flex flex-wrap gap-4">
             <ButtonLink href="/about-us" variant="light">Read the full story</ButtonLink>

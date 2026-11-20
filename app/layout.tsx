@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import "./globals.css";
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
+import { SiteFooter, SiteHeader } from "@/components/layout/site-chrome-data";
 import { RouteTransition } from "@/components/motion/route-transition";
 
 export const metadata: Metadata = {
@@ -15,9 +15,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en">
       <body>
         <a className="skip-link" href="#main-content">Skip to content</a>
-        <Header />
-        <main id="main-content"><RouteTransition>{children}</RouteTransition></main>
-        <Footer />
+        <Suspense fallback={<div className="h-[76px] bg-paper lg:h-[84px]" />}><SiteHeader /></Suspense>
+        <main id="main-content"><Suspense fallback={<div className="route-transition">{children}</div>}><RouteTransition>{children}</RouteTransition></Suspense></main>
+        <Suspense fallback={<div className="h-32 bg-ink" />}><SiteFooter /></Suspense>
       </body>
     </html>
   );

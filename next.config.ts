@@ -1,5 +1,5 @@
 import type { NextConfig } from "next";
-import { sitePages } from "./data/company";
+import { sitePages } from "./data/routes";
 
 const nextConfig: NextConfig = {
   /* config options here */

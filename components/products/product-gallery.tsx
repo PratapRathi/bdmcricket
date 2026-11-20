@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
-import type { Product } from "@/data/products";
+import type { Product } from "@/lib/catalog-types";
 
 gsap.registerPlugin(useGSAP);
 

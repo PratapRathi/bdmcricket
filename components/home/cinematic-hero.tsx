@@ -5,11 +5,12 @@ import Link from "next/link";
 import { useRef } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
+import type { Product } from "@/lib/catalog-types";
 import { ButtonLink } from "@/components/ui/button-link";
 
 gsap.registerPlugin(useGSAP);
 
-export function CinematicHero() {
+export function CinematicHero({ founded, product }: { founded: number; product: Product }) {
   const scope = useRef<HTMLElement>(null);
 
   useGSAP(() => {
@@ -33,14 +34,14 @@ export function CinematicHero() {
       <div className="hero-grain" aria-hidden="true" />
       <div className="hero-grid mx-auto grid min-h-[650px] max-w-[1600px] lg:min-h-[min(790px,calc(100svh-84px))] lg:grid-cols-[1.08fr_0.92fr]">
         <div className="hero-copy relative z-10 flex flex-col justify-center px-5 py-16 sm:px-8 lg:px-[max(3rem,calc((100vw-1440px)/2+3rem))] lg:py-20">
-          <p className="hero-kicker"><span className="hero-dot" /> House of Cricket <span className="hero-kicker-separator">/</span> Since 1925</p>
+          <p className="hero-kicker"><span className="hero-dot" /> House of Cricket <span className="hero-kicker-separator">/</span> Since {founded}</p>
           <h1 className="hero-title mt-8 font-display font-semibold tracking-[-0.085em]">
             <span className="hero-title-mask"><span className="hero-title-piece">The game,</span></span>
             <span className="hero-title-mask"><span className="hero-title-piece">in your</span></span>
             <span className="hero-title-mask"><span className="hero-title-piece hero-title-accent">hands.</span></span>
           </h1>
           <p className="hero-description mt-8 max-w-lg text-base leading-7 text-white/60 sm:text-lg sm:leading-8">
-            Made in Meerut. Shaped by a family’s work with cricket since 1925.
+            Made in Meerut. Shaped by a family’s work with cricket since {founded}.
           </p>
           <div className="hero-actions mt-9 flex flex-wrap items-center gap-4">
             <ButtonLink href="/products" variant="red">Explore the range</ButtonLink>
@@ -58,8 +59,8 @@ export function CinematicHero() {
           </div>
           <div className="hero-crease" aria-hidden="true" />
           <Image
-            src="/assets/bdm-dynamic-power-super-cricket-bat-500x-omhzyo10.jpg"
-            alt="BDM Dynamic Power Super cricket bat"
+            src={product.image}
+            alt={product.name}
             width={500}
             height={500}
             priority
@@ -68,7 +69,7 @@ export function CinematicHero() {
           />
           <div className="hero-product-note absolute bottom-8 left-6 z-10 max-w-44 sm:bottom-12 sm:left-10">
             <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-red">BDM / 01</span>
-            <span className="mt-2 block font-display text-lg font-semibold leading-tight tracking-[-0.04em] text-ink">Dynamic Power<br />Super Bat</span>
+            <span className="mt-2 block font-display text-lg font-semibold leading-tight tracking-[-0.04em] text-ink">{product.name.replace(/^BDM\s+/, "").replace(/\s+Cricket\s+/, " ")}</span>
           </div>
           <div className="hero-seal absolute bottom-8 right-6 z-10 grid h-[84px] w-[84px] place-items-center rounded-full border border-ink/20 text-center font-display text-[10px] font-bold uppercase leading-tight tracking-[0.12em] text-ink sm:bottom-12 sm:right-10 sm:h-[104px] sm:w-[104px]">
             <span>Made for<br />the long<br />innings</span>

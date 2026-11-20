@@ -1,31 +1,25 @@
 import Image from "next/image";
 import Link from "next/link";
-import { awards, companyStory, newsNotice, rating } from "@/data/company";
-import { categories, products } from "@/data/products";
+import { getCompanyContent } from "@/lib/data/company";
+import { getCategories, getProducts } from "@/lib/data/catalog";
 import { CinematicHero } from "@/components/home/cinematic-hero";
 import { HomeStory } from "@/components/home/home-story";
+import { CentenaryFeature } from "@/components/home/centenary-feature";
 import { ProductCard } from "@/components/products/product-card";
 import { VideoFeature } from "@/components/media/video-feature";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 
-const featuredNames = [
-  "BDM Dynamic Power Super Cricket Bat",
-  "BDM Club Master Red Cricket Leather Ball",
-  "BDM Terminator Cricket Batting Gloves",
-  "BDM X-Plod Pro Cricket Batting Leg Guards",
-];
-
-const featuredProducts = featuredNames.map((name) => products.find((product) => product.name === name)).filter((product) => product !== undefined);
-const featureCategories = ["cricket-bat", "cricket-ball", "cricket-batting-gloves", "cricket-batting-pad", "cricket-helmet", "cricket-kit-bag"]
-  .map((slug) => categories.find((category) => category.slug === slug))
-  .filter((category) => category !== undefined);
-
-export function HomePage() {
+export async function HomePage() {
+  const [featureCategories, products, content] = await Promise.all([getCategories(), getProducts(), getCompanyContent()]);
+  const { awards, companyStory, newsNotice, rating, history, company, centenary } = content;
+  const featuredProducts = products.filter((product) => product.isFeatured).sort((a, b) => (a.featuredSortOrder ?? Infinity) - (b.featuredSortOrder ?? Infinity)).slice(0, 4);
+  const heroProduct = featuredProducts[0] ?? products[0];
+  if (!heroProduct) throw new Error("The product catalogue is empty.");
   return (
     <>
-      <CinematicHero />
+      <CinematicHero founded={company.founded} product={heroProduct} />
 
       <section className="category-ticker" aria-label="Shop product categories">
         <div className="category-ticker-track">
@@ -35,7 +29,8 @@ export function HomePage() {
         </div>
       </section>
 
-      <HomeStory />
+      <HomeStory history={history} storyImage={company.storyImage} product={heroProduct} />
+      <CentenaryFeature founded={company.founded} {...centenary} />
 
       <section className="section-pad bg-[#e8e3d8]">
         <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
@@ -135,7 +130,7 @@ export function HomePage() {
             <p className="mt-6 max-w-md text-base leading-7 text-ink/65">A corporate film from the BDM Cricket source site.</p>
             <ButtonLink href="/corporate-video" variant="dark" className="mt-8">Explore BDM media</ButtonLink>
           </Reveal>
-          <Reveal><VideoFeature /></Reveal>
+          <Reveal><VideoFeature company={company} /></Reveal>
         </div>
       </section>
 

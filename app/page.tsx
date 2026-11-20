@@ -1,17 +1,29 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
+import { Suspense } from "react";
 import { HomePage } from "@/components/home/home-page";
+import { getCompanyContent } from "@/lib/data/company";
 
-export const metadata: Metadata = {
-  title: "BDM Cricket — House of Cricket Since 1925",
-  description: "Explore cricket bats, balls, protective equipment, and accessories from BDM Cricket, based in Meerut, India.",
-  alternates: { canonical: "/" },
-  openGraph: {
-    title: "BDM Cricket — House of Cricket Since 1925",
-    description: "A cricket equipment range shaped by a family’s work with the game since 1925.",
-    images: ["/assets/01-500x500-mja3oz1o.jpg"],
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  await connection();
+  const { company } = await getCompanyContent();
+  return {
+    title: `BDM Cricket — House of Cricket Since ${company.founded}`,
+    description: "Explore cricket bats, balls, protective equipment, and accessories from BDM Cricket, based in Meerut, India.",
+    alternates: { canonical: "/" },
+    openGraph: {
+      title: `BDM Cricket — House of Cricket Since ${company.founded}`,
+      description: `A cricket equipment range shaped by a family’s work with the game since ${company.founded}.`,
+      images: [company.storyImage],
+    },
+  };
+}
 
 export default function Page() {
+  return <Suspense fallback={<div className="min-h-screen bg-paper" />}><HomeData /></Suspense>;
+}
+
+async function HomeData() {
+  await connection();
   return <HomePage />;
 }

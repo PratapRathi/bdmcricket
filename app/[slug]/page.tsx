@@ -1,21 +1,22 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { CategoryPage, ProductHubPage } from "@/components/products/category-page";
-import { EditorialPage, getEditorialConfig } from "@/components/content/editorial-page";
-import { sitePages } from "@/data/company";
-import { categories } from "@/data/products";
-
-export function generateStaticParams() {
-  return sitePages.map((slug) => ({ slug }));
-}
+import { connection } from "next/server";
+import { notFound, redirect } from "next/navigation";
+import { Suspense } from "react";
+import { CategoryPage } from "@/components/products/category-page";
+import { EditorialPage } from "@/components/content/editorial-page";
+import { getCategoryBySlug, getLegacyRedirect } from "@/lib/data/catalog";
+import { getEditorialConfig } from "@/lib/data/company";
 
 export async function generateMetadata({ params }: PageProps<"/[slug]">): Promise<Metadata> {
+  await connection();
   const { slug } = await params;
-  const editorial = getEditorialConfig(slug);
+  const editorial = await getEditorialConfig(slug);
   if (editorial) {
     return { title: `${editorial.title.replace(/[.]$/, "")} | BDM Cricket`, description: editorial.metaDescription, alternates: { canonical: `/${slug}` } };
   }
-  const category = categories.find((item) => item.slug === slug);
+  const legacyRedirect = await getLegacyRedirect(slug);
+  if (legacyRedirect) return { alternates: { canonical: legacyRedirect.split("#")[0] } };
+  const category = await getCategoryBySlug(slug);
   return {
     title: `${category?.name ?? "Cricket Equipment"} | BDM Cricket`,
     description: category?.description ?? "Explore cricket equipment from the BDM range.",
@@ -23,10 +24,16 @@ export async function generateMetadata({ params }: PageProps<"/[slug]">): Promis
   };
 }
 
-export default async function SitePage({ params }: PageProps<"/[slug]">) {
+export default function SitePage({ params }: PageProps<"/[slug]">) {
+  return <Suspense fallback={<div className="min-h-screen bg-paper" />}><SitePageData params={params} /></Suspense>;
+}
+
+async function SitePageData({ params }: { params: Promise<{ slug: string }> }) {
+  await connection();
   const { slug } = await params;
-  if (getEditorialConfig(slug)) return <EditorialPage slug={slug} />;
-  if (slug === "cricket-equipment") return <ProductHubPage />;
-  if (sitePages.includes(slug as (typeof sitePages)[number])) return <CategoryPage slug={slug} />;
+  if (await getEditorialConfig(slug)) return <EditorialPage slug={slug} />;
+  const legacyRedirect = await getLegacyRedirect(slug);
+  if (legacyRedirect) redirect(legacyRedirect);
+  if (await getCategoryBySlug(slug)) return <CategoryPage slug={slug} />;
   notFound();
 }

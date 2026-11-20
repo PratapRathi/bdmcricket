@@ -2,9 +2,11 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { company } from "@/data/company";
+import type { getCompanyContent } from "@/lib/data/company";
 
-export function VideoFeature() {
+type Company = Awaited<ReturnType<typeof getCompanyContent>>["company"];
+
+export function VideoFeature({ company }: { company: Company }) {
   const [playing, setPlaying] = useState(false);
 
   return (

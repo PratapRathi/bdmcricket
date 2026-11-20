@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
+import { Suspense } from "react";
 import { ProductHubPage } from "@/components/products/category-page";
 
 export const metadata: Metadata = {
@@ -7,5 +9,10 @@ export const metadata: Metadata = {
 };
 
 export default function ProductsPage() {
+  return <Suspense fallback={<div className="min-h-screen bg-paper" />}><ProductsData /></Suspense>;
+}
+
+async function ProductsData() {
+  await connection();
   return <ProductHubPage />;
 }

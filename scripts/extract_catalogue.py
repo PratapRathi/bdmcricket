@@ -13,7 +13,8 @@ from pathlib import Path
 from urllib.parse import unquote, urlparse
 
 SOURCE = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("../bdmcricket")
-OUTPUT = Path("data/products.ts")
+OUTPUT = Path("prisma/import-source/products.ts")
+TAXONOMY_FILE = Path("prisma/import-source/product-taxonomy.json")
 
 CATEGORIES = {
     "cricket-bat": ("Cricket Bats", "Bats for club and match play"),
@@ -121,6 +122,85 @@ def local_images(name: str, candidates: list[str], asset_dir: Path) -> list[str]
     return selected[:4] or ["/assets/bdm-dyna-drive-cricket-bat-500x500-11bmnoi1.png"]
 
 
+def classify_product(product: dict) -> tuple[str, list[str]]:
+    name = product["name"].casefold()
+    spec_text = " ".join(f'{item["name"]} {item["value"]}' for item in product["specifications"]).casefold()
+    source_category = product["categorySlug"]
+
+    if re.search(r"kit bag|kit size|\bkits\b", name):
+        subcategory = "cricket-kits" if "size 4,5,6" in name else "kit-bags"
+        return "kit-bag", [subcategory]
+    if re.search(r"cricket wear|\bhat\b|\bcap\b|\bsocks\b", name):
+        subcategory = "cricket-wear" if "wear" in name else "socks" if "sock" in name else "hats-caps"
+        return "clothing", [subcategory]
+    if "rubber grip" in name:
+        return "accessories", ["bat-grips"]
+    if re.search(r"mallet|gripping cone|umpire counter|catch practice bat", name):
+        return "accessories", ["training-accessories"]
+    if re.search(r"stumps?\b", name):
+        return "accessories", ["stumps-bails"]
+    if re.search(r"wicket[ -]?keeping.*pad", name):
+        return "protective-gear", ["keeping-pads"]
+    if re.search(r"wicket[ -]?keeping.*glove|keeping inner glove", name) or ("inner gloves" in name and "wicket keeping" in spec_text):
+        return "protective-gear", ["keeping-gloves"]
+    if re.search(r"batting.*glove|inner glove|skin fit cotton inner glove", name):
+        return "protective-gear", ["batting-gloves"]
+    if re.search(r"batting.*pad|batting leg guard|leg guard", name):
+        return "protective-gear", ["batting-pads"]
+    if "helmet" in name:
+        return "protective-gear", ["helmets"]
+    if "elbow guard" in name:
+        return "protective-gear", ["elbow-guards"]
+    if "thigh guard" in name:
+        return "protective-gear", ["thigh-guards"]
+    if "chest guard" in name:
+        return "protective-gear", ["chest-guards"]
+    if "abdominal guard" in name:
+        return "protective-gear", ["abdominal-guards"]
+    if re.search(r"supporter|calf .*band|knee band", name):
+        return "protective-gear", ["supporters-bands"]
+    if "ball" in name:
+        color = next((item["value"].casefold() for item in product["specifications"] if re.search(r"color|colour", item["name"], re.I)), "")
+        color_text = f"{name} {color}"
+        subcategories = []
+        if "white" in color_text:
+            subcategories.append("white-leather-balls")
+        if "red" in color_text:
+            subcategories.append("red-leather-balls")
+        return "balls", subcategories or ["red-leather-balls"]
+    if re.search(r"cricket bat|willow bat|miniature cricket bat", name) or source_category in {"cricket-bat", "bdm-english-willow-cricket-bat"}:
+        english_willow = source_category == "bdm-english-willow-cricket-bat" or "english willow" in name or "willow type english" in spec_text
+        other_bat = bool(re.search(r"plastic|synthetic|miniature|mini bat", name)) or "willow type plastic" in spec_text
+        subcategory = "other-bats" if other_bat else "english-willow-bats" if english_willow else "kashmir-willow-bats"
+        return "bats", [subcategory]
+
+    raise ValueError(f'No taxonomy rule for {product["name"]} ({source_category})')
+
+
+def taxonomy_output() -> str:
+    return '''
+export const categories: ProductCategory[] = categoryDefinitions.map((category) => ({
+  ...category,
+  count: products.filter((product) => product.categorySlug === category.slug).length,
+  subcategories: category.subcategories.map((subcategory) => ({
+    ...subcategory,
+    count: products.filter((product) => product.categorySlug === category.slug && product.subcategorySlugs.includes(subcategory.slug)).length,
+  })).filter((subcategory) => subcategory.count > 0),
+}));
+
+export function getCategoryBySlug(slug: string): ProductCategory | undefined {
+  return categories.find((category) => category.slug === slug);
+}
+
+export function getProductSubcategories(product: Pick<Product, "categorySlug" | "subcategorySlugs">): ProductSubcategory[] {
+  const category = getCategoryBySlug(product.categorySlug);
+  return category?.subcategories.filter((subcategory) => product.subcategorySlugs.includes(subcategory.slug)) ?? [];
+}
+
+export { legacyCategoryRedirects };
+'''
+
+
 def main() -> None:
     image_map: dict[str, list[str]] = defaultdict(list)
     for path in SOURCE.glob("*.html"):
@@ -170,23 +250,37 @@ def main() -> None:
                     if src not in existing["images"] and len(existing["images"]) < 4:
                         existing["images"].append(src)
 
-    categories = []
-    for route, (label, description) in CATEGORIES.items():
-        count = sum(item["categorySlug"] == route for item in unique.values())
-        if count:
-            categories.append({"slug": route, "name": label, "description": description, "count": count})
+    taxonomy = json.loads(TAXONOMY_FILE.read_text(encoding="utf-8"))
+    categories_by_slug = {category["slug"]: category for category in taxonomy["categories"]}
+    for product in unique.values():
+        category_slug, subcategory_slugs = classify_product(product)
+        if category_slug not in categories_by_slug:
+            raise ValueError(f'Unknown top-level category {category_slug} for {product["name"]}')
+        valid_subcategories = {subcategory["slug"] for subcategory in categories_by_slug[category_slug]["subcategories"]}
+        if not set(subcategory_slugs).issubset(valid_subcategories):
+            raise ValueError(f'Unknown subcategory for {product["name"]}: {subcategory_slugs}')
+        product["category"] = categories_by_slug[category_slug]["name"]
+        product["categorySlug"] = category_slug
+        product["subcategorySlugs"] = subcategory_slugs
 
+    category_slug_type = " | ".join(json.dumps(category["slug"]) for category in taxonomy["categories"])
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text(
-        "// Extracted from the supplied BDM Cricket site clone. Keep source facts intact.\n"
-        "export type ProductSpecification = { name: string; value: string };\n"
-        "export type Product = { slug: string; name: string; category: string; categorySlug: string; price: string; image: string; images: string[]; productCode: string; specifications: ProductSpecification[] };\n"
-        "export type ProductCategory = { slug: string; name: string; description: string; count: number };\n\n"
-        "export const categories: ProductCategory[] = " + json.dumps(categories, ensure_ascii=False, indent=2) + ";\n\n"
-        "export const products: Product[] = " + json.dumps(list(unique.values()), ensure_ascii=False, indent=2) + ";\n",
+        'import productTaxonomy from "./product-taxonomy.json";\n\n'
+        "// Product taxonomy and catalogue extracted from the supplied BDM Cricket site clone.\n"
+        'export type ProductSpecification = { name: string; value: string };\n'
+        "export type ProductCategorySlug = " + category_slug_type + ";\n"
+        'export type ProductSubcategory = { slug: string; name: string; description: string; count: number };\n'
+        'export type ProductCategory = { slug: ProductCategorySlug; name: string; description: string; count: number; subcategories: ProductSubcategory[] };\n'
+        'export type Product = { slug: string; name: string; category: string; categorySlug: ProductCategorySlug; subcategorySlugs: string[]; price: string; image: string; images: string[]; productCode: string; specifications: ProductSpecification[] };\n'
+        'type ProductCategoryDefinition = Omit<ProductCategory, "count" | "subcategories"> & { subcategories: Omit<ProductSubcategory, "count">[] };\n'
+        'type ProductTaxonomyData = { categories: ProductCategoryDefinition[]; legacyCategoryRedirects: Record<string, string> };\n\n'
+        'const { categories: categoryDefinitions, legacyCategoryRedirects } = productTaxonomy as ProductTaxonomyData;\n\n'
+        "export const products: Product[] = " + json.dumps(list(unique.values()), ensure_ascii=False, indent=2) + ";\n"
+        + taxonomy_output(),
         encoding="utf-8",
     )
-    print(f"Extracted {len(unique)} unique products across {len(categories)} categories into {OUTPUT}")
+    print(f"Extracted {len(unique)} unique products into {len(taxonomy['categories'])} top-level categories in {OUTPUT}")
 
 
 if __name__ == "__main__":

@@ -1,37 +1,30 @@
 import Image from "next/image";
 import Link from "next/link";
-import { categories, products } from "@/data/products";
+import { getCategories, getCategoryBySlug, getProducts, getProductsByCategorySlug } from "@/lib/data/catalog";
+import type { Product, ProductCategory } from "@/lib/catalog-types";
 import { ProductBrowser } from "@/components/products/product-browser";
+import { ProductCard } from "@/components/products/product-card";
 import { ButtonLink } from "@/components/ui/button-link";
 
-const equivalentCategories: Record<string, string[]> = {
-  "cricket-wicketkeeping-gloves": ["cricket-wicketkeeping-gloves", "wicket-keeping-gloves"],
-  "wicket-keeping-gloves": ["cricket-wicketkeeping-gloves", "wicket-keeping-gloves"],
-};
+export async function CategoryPage({ slug }: { slug: string }) {
+  const [category, collection] = await Promise.all([getCategoryBySlug(slug), getProductsByCategorySlug(slug)]);
+  if (!category) return <ProductHubPage />;
 
-export function CategoryPage({ slug }: { slug: string }) {
-  if (slug === "cricket-equipment") return <ProductHubPage />;
-
-  const acceptedSlugs = equivalentCategories[slug] ?? [slug];
-  const category = categories.find((item) => item.slug === slug) ?? categories.find((item) => acceptedSlugs.includes(item.slug));
-  const collection = products.filter((product) => acceptedSlugs.includes(product.categorySlug));
-  const title = category?.name ?? "Cricket Equipment";
-  const lead = category?.description ?? "Explore cricket equipment across the BDM range.";
+  const darkCollection = category.slug === "bats" || category.slug === "balls";
   const heroProduct = collection[0];
-  const darkCollection = slug === "cricket-bat" || slug === "bdm-english-willow-cricket-bat";
 
   return (
     <>
-      <section className={`collection-hero ${darkCollection ? "collection-hero--dark" : ""}`} data-category={slug}>
+      <section className={`collection-hero ${darkCollection ? "collection-hero--dark" : ""}`} data-category={category.slug}>
         <div className="mx-auto grid max-w-[1440px] gap-8 px-5 py-12 sm:px-8 sm:py-16 lg:grid-cols-[1fr_0.7fr] lg:items-center lg:px-12 lg:py-20">
           <div className="relative z-10">
-            <p className={`eyebrow ${darkCollection ? "text-white/55" : "text-brand-red"}`}><Link href="/products" className="hover:underline">Equipment</Link><span className="mx-2 opacity-50">/</span>{title}</p>
-            <h1 className="mt-5 max-w-4xl font-display text-5xl font-semibold leading-[0.9] tracking-[-0.07em] sm:text-7xl lg:text-8xl">{title}<span className="text-brand-red">.</span></h1>
-            <p className={`mt-6 max-w-xl text-base leading-7 sm:text-lg ${darkCollection ? "text-white/60" : "text-ink/60"}`}>{lead} Explore the range and view available product information.</p>
+            <p className={`eyebrow ${darkCollection ? "text-white/55" : "text-brand-red"}`}><Link href="/products" className="hover:underline">Equipment</Link><span className="mx-2 opacity-50">/</span>{category.name}</p>
+            <h1 className="mt-5 max-w-4xl font-display text-5xl font-semibold leading-[0.9] tracking-[-0.07em] sm:text-7xl lg:text-8xl">{category.name}<span className="text-brand-red">.</span></h1>
+            <p className={`mt-6 max-w-xl text-base leading-7 sm:text-lg ${darkCollection ? "text-white/60" : "text-ink/60"}`}>{category.description}</p>
             <div className="mt-8 flex items-center gap-5">
               <span className="font-display text-3xl font-semibold tracking-[-0.06em]">{collection.length.toString().padStart(2, "0")}</span>
               <span className={`h-8 w-px ${darkCollection ? "bg-white/25" : "bg-ink/20"}`} />
-              <span className={`text-xs font-semibold uppercase tracking-[0.16em] ${darkCollection ? "text-white/50" : "text-ink/50"}`}>Products in this collection</span>
+              <span className={`text-xs font-semibold uppercase tracking-[0.16em] ${darkCollection ? "text-white/50" : "text-ink/50"}`}>Products in this category</span>
             </div>
           </div>
           <div className="collection-hero-art relative mx-auto flex h-[280px] w-full max-w-[480px] items-center justify-center sm:h-[360px] lg:h-[430px]">
@@ -39,14 +32,28 @@ export function CategoryPage({ slug }: { slug: string }) {
             <span className="collection-stamp">BDM<br />Cricket<br />Equipment</span>
           </div>
         </div>
-        <div className="mx-auto flex max-w-[1440px] gap-3 overflow-x-auto px-5 pb-6 sm:px-8 lg:px-12">
-          {categories.map((item) => <Link key={item.slug} href={`/${item.slug}`} className={`category-pill ${item.slug === slug ? "is-active" : ""}`}>{item.name}</Link>)}
-        </div>
+        <nav aria-label={`${category.name} subcategories`} className="mx-auto flex max-w-[1440px] gap-3 overflow-x-auto px-5 pb-6 sm:px-8 lg:px-12">
+          {category.subcategories.map((subcategory) => <Link key={subcategory.slug} href={`#${subcategory.slug}`} className="category-pill">{subcategory.name}</Link>)}
+        </nav>
       </section>
 
       <section className="section-pad bg-white">
-        <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
-          <ProductBrowser products={collection} categories={[...new Set(collection.map((product) => product.category))]} initialCategory="All equipment" />
+        <div className="mx-auto max-w-[1440px] space-y-16 px-5 sm:px-8 lg:px-12 lg:space-y-20">
+          {category.subcategories.map((subcategory) => {
+            const items = collection.filter((product) => product.subcategorySlugs.includes(subcategory.slug));
+            if (!items.length) return null;
+            return (
+              <section key={subcategory.slug} id={subcategory.slug} className="scroll-mt-32">
+                <div className="mb-7 flex flex-col justify-between gap-4 border-b border-ink/10 pb-5 sm:flex-row sm:items-end">
+                  <div><p className="eyebrow text-brand-red">{category.name}</p><h2 className="mt-3 font-display text-3xl font-semibold tracking-[-0.05em] sm:text-4xl">{subcategory.name}</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-ink/55">{subcategory.description}</p></div>
+                  <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.14em] text-ink/40">{items.length} {items.length === 1 ? "product" : "products"}</span>
+                </div>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 sm:gap-y-14 lg:grid-cols-3 xl:grid-cols-4">
+                  {items.map((product, index) => <ProductCard key={product.slug} product={product} index={index} />)}
+                </div>
+              </section>
+            );
+          })}
         </div>
       </section>
 
@@ -60,30 +67,39 @@ export function CategoryPage({ slug }: { slug: string }) {
   );
 }
 
-export function ProductHubPage() {
+export async function ProductHubPage() {
+  const [categories, products] = await Promise.all([getCategories(), getProducts()]);
   return (
     <>
       <section className="page-hero bg-ink text-white">
         <div className="mx-auto max-w-[1440px] px-5 py-16 sm:px-8 sm:py-24 lg:px-12">
           <p className="eyebrow text-white/50">Explore the BDM range</p>
           <h1 className="mt-5 max-w-5xl font-display text-5xl font-semibold leading-[0.9] tracking-[-0.07em] sm:text-7xl lg:text-8xl">Equipment for<br /><span className="text-brand-red">every part of the game.</span></h1>
-          <p className="mt-7 max-w-2xl text-base leading-7 text-white/60 sm:text-lg">Browse bats, balls, protective gear, and accessories from the BDM catalogue.</p>
+          <p className="mt-7 max-w-2xl text-base leading-7 text-white/60 sm:text-lg">Browse bats, balls, kit bags, protective gear, accessories, and cricket clothing.</p>
         </div>
       </section>
       <section className="section-pad bg-paper">
         <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {categories.map((category, index) => {
-              const product = products.find((item) => item.categorySlug === category.slug);
-              return <Link key={category.slug} href={`/${category.slug}`} className={`hub-category hub-category-${(index % 4) + 1}`}>
-                {product && <Image src={product.image} alt="" width={420} height={420} className="h-48 w-full object-contain mix-blend-multiply sm:h-64" />}
-                <div className="mt-4 flex items-end justify-between gap-2"><div><h2 className="font-display text-xl font-semibold leading-tight tracking-[-0.04em]">{category.name}</h2><p className="mt-1 text-xs text-ink/55">{category.count} products</p></div><span aria-hidden="true" className="text-brand-red">↗</span></div>
-              </Link>;
-            })}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {categories.map((category, index) => <CategoryHubCard key={category.slug} category={category} product={products.find((item) => item.categorySlug === category.slug)} index={index} />)}
           </div>
         </div>
       </section>
-      <section className="section-pad bg-white"><div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12"><h2 className="mb-10 font-display text-4xl font-semibold tracking-[-0.06em]">The complete catalogue</h2><ProductBrowser products={products} categories={[...new Set(products.map((product) => product.category))]} /></div></section>
+      <section className="section-pad bg-white"><div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12"><h2 className="mb-10 font-display text-4xl font-semibold tracking-[-0.06em]">The complete catalogue</h2><ProductBrowser products={products} categories={categories} /></div></section>
     </>
+  );
+}
+
+function CategoryHubCard({ category, product, index }: { category: ProductCategory; product?: Product; index: number }) {
+  return (
+    <article className={`hub-category hub-category-${(index % 4) + 1} p-4 sm:p-6`}>
+      <Link href={`/${category.slug}`} className="group block">
+        {product && <div className="relative mb-4 h-48 sm:h-64"><Image src={product.image} alt="" fill sizes="(max-width: 640px) 100vw, 33vw" className="object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-105" /></div>}
+        <div className="flex items-end justify-between gap-2"><div><h2 className="font-display text-2xl font-semibold leading-tight tracking-[-0.04em]">{category.name}</h2><p className="mt-1 text-xs text-ink/55">{category.count} products</p></div><span aria-hidden="true" className="text-brand-red">↗</span></div>
+      </Link>
+      <div className="mt-4 flex flex-wrap gap-2 border-t border-ink/10 pt-4">
+        {category.subcategories.map((subcategory) => <Link key={subcategory.slug} href={`/${category.slug}#${subcategory.slug}`} className="rounded-full border border-ink/10 px-3 py-1.5 text-[10px] font-medium text-ink/60 transition-colors hover:border-ink hover:text-ink">{subcategory.name}</Link>)}
+      </div>
+    </article>
   );
 }

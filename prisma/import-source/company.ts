@@ -11,6 +11,8 @@ export const company = {
   website: "https://www.bdmcricket.net/",
   videoId: "44wLV5-NZmY",
   videoThumbnail: "/assets/hqdefault-7vlfi7lt.jpg",
+  storyImage: "/assets/01-500x500-mja3oz1o.jpg",
+  logo: "/assets/img-0292-90x90-kqnss7uc.png",
 };
 
 export const history = [
@@ -33,10 +35,22 @@ export const history = [
       "The company profile records a manufacturing unit starting with borrowed capital of Rs 400 and an early output of 16 bats a day. It later lists capacity of up to 600 bats a day.",
   },
   {
-    year: "1967 / 1986",
-    title: "The family company takes shape",
+    year: "1967",
+    title: "B. D. Mahajan & Sons established",
     detail:
-      "B. D. Mahajan & Sons was established with Sri B. D. Mahajan’s sons in 1967 and became a private limited company in 1986.",
+      "Sri B. D. Mahajan and his sons established B. D. Mahajan & Sons.",
+  },
+  {
+    year: "1986",
+    title: "Became a private limited company",
+    detail:
+      "B. D. Mahajan & Sons became a private limited company.",
+  },
+  {
+    year: "2025",
+    title: "100 years of cricket trade completed",
+    detail:
+      "The family cricket trade, begun in Sialkot in 1925, completed its first century.",
   },
 ];
 

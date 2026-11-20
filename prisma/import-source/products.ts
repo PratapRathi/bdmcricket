@@ -1,119 +1,22 @@
-// Extracted from the supplied BDM Cricket site clone. Keep source facts intact.
-export type ProductSpecification = { name: string; value: string };
-export type Product = { slug: string; name: string; category: string; categorySlug: string; price: string; image: string; images: string[]; productCode: string; specifications: ProductSpecification[] };
-export type ProductCategory = { slug: string; name: string; description: string; count: number };
+import productTaxonomy from "./product-taxonomy.json";
 
-export const categories: ProductCategory[] = [
-  {
-    "slug": "cricket-bat",
-    "name": "Cricket Bats",
-    "description": "Bats for club and match play",
-    "count": 32
-  },
-  {
-    "slug": "bdm-english-willow-cricket-bat",
-    "name": "English Willow Bats",
-    "description": "English willow bats from the BDM range",
-    "count": 27
-  },
-  {
-    "slug": "cricket-ball",
-    "name": "Cricket Balls",
-    "description": "Leather and training balls",
-    "count": 35
-  },
-  {
-    "slug": "leather-cricket-ball",
-    "name": "Leather Cricket Balls",
-    "description": "Leather balls for match play and practice",
-    "count": 2
-  },
-  {
-    "slug": "cricket-batting-gloves",
-    "name": "Batting Gloves",
-    "description": "Batting gloves across the BDM range",
-    "count": 9
-  },
-  {
-    "slug": "wicket-keeping-gloves",
-    "name": "Wicket Keeping Gloves",
-    "description": "Gloves for wicket keepers",
-    "count": 3
-  },
-  {
-    "slug": "cricket-wicketkeeping-gloves",
-    "name": "Wicket Keeping Gloves",
-    "description": "Gloves for wicket keepers",
-    "count": 4
-  },
-  {
-    "slug": "cricket-batting-pad",
-    "name": "Batting Pads",
-    "description": "Protection for the crease",
-    "count": 15
-  },
-  {
-    "slug": "cricket-wicketkeeping-pad",
-    "name": "Wicket Keeping Pads",
-    "description": "Pads for wicket keepers",
-    "count": 6
-  },
-  {
-    "slug": "cricket-helmet",
-    "name": "Cricket Helmets",
-    "description": "Protective helmets for cricket",
-    "count": 6
-  },
-  {
-    "slug": "cricket-kit-bag",
-    "name": "Kit Bags",
-    "description": "Bags for carrying cricket equipment",
-    "count": 5
-  },
-  {
-    "slug": "cricket-protective-equipment",
-    "name": "Protective Equipment",
-    "description": "Protective cricket equipment",
-    "count": 10
-  },
-  {
-    "slug": "cricket-accessories",
-    "name": "Accessories",
-    "description": "Training and match-day accessories",
-    "count": 3
-  },
-  {
-    "slug": "cricket-hat",
-    "name": "Cricket Hats",
-    "description": "Cricket hats and caps",
-    "count": 1
-  },
-  {
-    "slug": "white-cricket-wear",
-    "name": "Cricket Wear",
-    "description": "White cricket clothing",
-    "count": 1
-  },
-  {
-    "slug": "cricket-battingpad-sportsacademy",
-    "name": "Academy Equipment",
-    "description": "Equipment featured for cricket academies",
-    "count": 1
-  },
-  {
-    "slug": "cricket-equipments",
-    "name": "Cricket Accessories",
-    "description": "Additional cricket equipment",
-    "count": 4
-  }
-];
+// Product taxonomy and catalogue extracted from the supplied BDM Cricket site clone.
+export type ProductSpecification = { name: string; value: string };
+export type ProductCategorySlug = "bats" | "balls" | "kit-bag" | "protective-gear" | "accessories" | "clothing";
+export type ProductSubcategory = { slug: string; name: string; description: string; count: number };
+export type ProductCategory = { slug: ProductCategorySlug; name: string; description: string; count: number; subcategories: ProductSubcategory[] };
+export type Product = { slug: string; name: string; category: string; categorySlug: ProductCategorySlug; subcategorySlugs: string[]; price: string; image: string; images: string[]; productCode: string; specifications: ProductSpecification[] };
+type ProductCategoryDefinition = Omit<ProductCategory, "count" | "subcategories"> & { subcategories: Omit<ProductSubcategory, "count">[] };
+type ProductTaxonomyData = { categories: ProductCategoryDefinition[]; legacyCategoryRedirects: Record<string, string> };
+
+const { categories: categoryDefinitions, legacyCategoryRedirects } = productTaxonomy as ProductTaxonomyData;
 
 export const products: Product[] = [
   {
     "slug": "bdm-dyna-drive-cricket-bat",
     "name": "BDM Dyna Drive Cricket Bat",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 5,600 / Piece",
     "image": "/assets/bdm-dyna-drive-cricket-bat-500x500-11bmnoi1.png",
     "images": [
@@ -148,13 +51,16 @@ export const products: Product[] = [
         "name": "Sweet Spot Location",
         "value": "Mid"
       }
+    ],
+    "subcategorySlugs": [
+      "kashmir-willow-bats"
     ]
   },
   {
     "slug": "bdm-miller-cricket-bat",
     "name": "BDM Miller Cricket Bat",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 3,400 / Piece",
     "image": "/assets/bdm-miller-cricket-bat-500x500-10tx72v4.png",
     "images": [
@@ -189,13 +95,16 @@ export const products: Product[] = [
         "name": "Sweet Spot Location",
         "value": "Mid"
       }
+    ],
+    "subcategorySlugs": [
+      "kashmir-willow-bats"
     ]
   },
   {
     "slug": "bdm-old-gold-cricket-bat",
     "name": "BDM Old Gold Cricket Bat",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 6,000 / Piece",
     "image": "/assets/bdm-old-gold-cricket-bat-500x500-1s5py9xl.png",
     "images": [
@@ -230,13 +139,16 @@ export const products: Product[] = [
         "name": "Sweet Spot Location",
         "value": "Mid"
       }
+    ],
+    "subcategorySlugs": [
+      "kashmir-willow-bats"
     ]
   },
   {
     "slug": "bdm-plastic-cricket-bat",
     "name": "BDM Plastic Cricket Bat",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 800 / Piece",
     "image": "/assets/bdm-plastic-cricket-bat-500x500-qduvnj1x-2.jpg",
     "images": [
@@ -267,13 +179,16 @@ export const products: Product[] = [
         "name": "Handle Length",
         "value": "Long Handle"
       }
+    ],
+    "subcategorySlugs": [
+      "other-bats"
     ]
   },
   {
     "slug": "bdm-player-s-autograph-cricket-bat",
     "name": "BDM Player's Autograph Cricket Bat",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 4,199 / Piece",
     "image": "/assets/bdm-player-s-autograph-cricket-bat-500x5-1e1hhl1i-3.jpg",
     "images": [
@@ -308,13 +223,16 @@ export const products: Product[] = [
         "name": "Edge Size (mm)",
         "value": "40MM"
       }
+    ],
+    "subcategorySlugs": [
+      "kashmir-willow-bats"
     ]
   },
   {
     "slug": "bdm-hammer-cricket-bat",
     "name": "BDM Hammer Cricket Bat",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 3,400 / Piece",
     "image": "/assets/bdm-hammer-cricket-bat-500x500-1bildks1.png",
     "images": [
@@ -349,13 +267,16 @@ export const products: Product[] = [
         "name": "Wooden Type",
         "value": "Kashmir Willow"
       }
+    ],
+    "subcategorySlugs": [
+      "kashmir-willow-bats"
     ]
   },
   {
     "slug": "bdm-ruff-tuff-synthetic-cricket-bat",
     "name": "BDM RUFF TUFF Synthetic Cricket Bat",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 3,000 / Piece",
     "image": "/assets/bdm-ruff-tuff-synthetic-cricket-bat-500x-18839z01.jpg",
     "images": [
@@ -390,13 +311,16 @@ export const products: Product[] = [
         "name": "Cover Included",
         "value": "Yes"
       }
+    ],
+    "subcategorySlugs": [
+      "other-bats"
     ]
   },
   {
     "slug": "bdm-galaxy-plus-cricket-bat",
     "name": "BDM Galaxy Plus Cricket Bat",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 4,600 / Piece",
     "image": "/assets/bdm-galaxy-plus-cricket-bat-500x500-1a722n01.png",
     "images": [
@@ -431,13 +355,16 @@ export const products: Product[] = [
         "name": "Bow Size",
         "value": "Standard"
       }
+    ],
+    "subcategorySlugs": [
+      "kashmir-willow-bats"
     ]
   },
   {
     "slug": "bdm-dasher-20-20-cricket-bat",
     "name": "BDM Dasher 20-20 Cricket Bat",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 4,800 / Piece",
     "image": "/assets/bdm-dasher-20-20-cricket-bat-500x500-ljpyyx1y.jpg",
     "images": [
@@ -460,13 +387,16 @@ export const products: Product[] = [
         "name": "Cover Included",
         "value": "Yes"
       }
+    ],
+    "subcategorySlugs": [
+      "kashmir-willow-bats"
     ]
   },
   {
     "slug": "bdm-admiral-jumbo-cricket-bat",
     "name": "BDM Admiral Jumbo Cricket Bat",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 5,400 / Piece",
     "image": "/assets/bdm-admiral-jumbo-cricket-bat-500x500-1cn6x821.jpg",
     "images": [
@@ -501,13 +431,16 @@ export const products: Product[] = [
         "name": "Sweet Spot Location",
         "value": "Mid"
       }
+    ],
+    "subcategorySlugs": [
+      "kashmir-willow-bats"
     ]
   },
   {
     "slug": "bdm-world-cup-cricket-bat",
     "name": "BDM World Cup Cricket Bat",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 4,000 / Piece",
     "image": "/assets/bdm-world-cup-cricket-bat-500x500-exh3wm17.png",
     "images": [
@@ -542,13 +475,16 @@ export const products: Product[] = [
         "name": "Cover Included",
         "value": "Yes"
       }
+    ],
+    "subcategorySlugs": [
+      "kashmir-willow-bats"
     ]
   },
   {
     "slug": "bdm-super-test-2000-cricket-bat",
     "name": "BDM Super Test 2000 Cricket Bat",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 4,400 / Piece",
     "image": "/assets/bdm-super-test-2000-cricket-bat-500x500-1id8w0y3.png",
     "images": [
@@ -563,13 +499,16 @@ export const products: Product[] = [
         "name": "Weight Range (g)",
         "value": "We provide Costumer according"
       }
+    ],
+    "subcategorySlugs": [
+      "kashmir-willow-bats"
     ]
   },
   {
     "slug": "bdm-smasher-cricket-bat",
     "name": "BDM Smasher Cricket Bat",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 4,400 / Piece",
     "image": "/assets/bdm-smasher-cricket-bat-500x500-m40f8783.jpg",
     "images": [
@@ -600,13 +539,16 @@ export const products: Product[] = [
         "name": "Country of Origin",
         "value": "Made in India"
       }
+    ],
+    "subcategorySlugs": [
+      "kashmir-willow-bats"
     ]
   },
   {
     "slug": "bdm-commander-max-power-cricket-bat",
     "name": "BDM Commander Max Power Cricket Bat",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 4,799 / Piece",
     "image": "/assets/bdm-commander-max-power-cricket-bat-500x-1oqb4yei.png",
     "images": [
@@ -616,13 +558,16 @@ export const products: Product[] = [
       "/assets/bdm-commander-max-power-cricket-bat-125x-ea7muq1y.png"
     ],
     "productCode": "EN03",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "kashmir-willow-bats"
+    ]
   },
   {
     "slug": "bdm-club-master-cricket-bat",
     "name": "BDM Club Master Cricket Bat",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 4,000 / Piece",
     "image": "/assets/bdm-club-master-cricket-bat-500x500-1i3p3mnt.png",
     "images": [
@@ -657,13 +602,16 @@ export const products: Product[] = [
         "name": "Cover Included",
         "value": "Yes"
       }
+    ],
+    "subcategorySlugs": [
+      "kashmir-willow-bats"
     ]
   },
   {
     "slug": "bdm-pro-cricket-bat",
     "name": "BDM Pro Cricket Bat",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 3,000 / Piece",
     "image": "/assets/bdm-pro-cricket-bat-500x500-up9s973a.jpg",
     "images": [
@@ -698,13 +646,16 @@ export const products: Product[] = [
         "name": "Willow Type",
         "value": "Kashmir (Indian) Willow"
       }
+    ],
+    "subcategorySlugs": [
+      "kashmir-willow-bats"
     ]
   },
   {
     "slug": "bdm-tennis-kashmir-popular-cricket-bat",
     "name": "BDM Tennis Kashmir Popular Cricket Bat",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 2,200 / Piece",
     "image": "/assets/bdm-tennis-cricket-bat-500x500-4j2nr1to.jpg",
     "images": [
@@ -739,13 +690,16 @@ export const products: Product[] = [
         "name": "Sweet Spot Location",
         "value": "Mid"
       }
+    ],
+    "subcategorySlugs": [
+      "kashmir-willow-bats"
     ]
   },
   {
     "slug": "bdm-grand-master-english-willow-bat",
     "name": "BDM Grand Master English Willow Bat",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 33,000 / Piece",
     "image": "/assets/bdm-grand-master-english-willow-bat-500x-1os6u1r1.jpg",
     "images": [
@@ -776,13 +730,16 @@ export const products: Product[] = [
         "name": "Bat Weight",
         "value": "Heavy Weight, Light Weight, Medium Weight"
       }
+    ],
+    "subcategorySlugs": [
+      "english-willow-bats"
     ]
   },
   {
     "slug": "bdm-boss-english-willow-bat",
     "name": "BDM Boss English Willow Bat",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 17,600 / Piece",
     "image": "/assets/bdm-boss-english-willow-bat-500x500-w3wrl81v.jpg",
     "images": [
@@ -813,13 +770,16 @@ export const products: Product[] = [
         "name": "Bat Size",
         "value": "Full Size"
       }
+    ],
+    "subcategorySlugs": [
+      "english-willow-bats"
     ]
   },
   {
     "slug": "dhurandhar-gen-z",
     "name": "Dhurandhar ( Gen z )",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 24,000 / Piece",
     "image": "/assets/9-500x500-th948dul.jpg",
     "images": [
@@ -854,13 +814,16 @@ export const products: Product[] = [
         "name": "Bat Profile",
         "value": "Full Profile"
       }
+    ],
+    "subcategorySlugs": [
+      "kashmir-willow-bats"
     ]
   },
   {
     "slug": "kashmiri-willow-cricket-bat",
     "name": "Kashmiri Willow Cricket Bat",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 4,800 / Piece",
     "image": "/assets/kashmiri-willow-cricket-bat-500x500-e7er6qdr.png",
     "images": [
@@ -891,13 +854,16 @@ export const products: Product[] = [
         "name": "Bat Weight",
         "value": "Light Weight, Medium Weight, Heavy Weight"
       }
+    ],
+    "subcategorySlugs": [
+      "kashmir-willow-bats"
     ]
   },
   {
     "slug": "dhurandhar-genz-super-duper",
     "name": "Dhurandhar ( Genz Super Duper )",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 52,000 / Piece",
     "image": "/assets/dhurandhar-blockbuster-500x500-jxkc6xbk.png",
     "images": [
@@ -932,13 +898,16 @@ export const products: Product[] = [
         "name": "Bat Profile",
         "value": "High Profile"
       }
+    ],
+    "subcategorySlugs": [
+      "kashmir-willow-bats"
     ]
   },
   {
     "slug": "dhurandhar-blockbuster-edition",
     "name": "Dhurandhar ( blockbuster edition )",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 36,000 / Piece",
     "image": "/assets/4-500x500-18z2s1hd.jpg",
     "images": [
@@ -973,13 +942,16 @@ export const products: Product[] = [
         "name": "Handle Type",
         "value": "Short Handle"
       }
+    ],
+    "subcategorySlugs": [
+      "kashmir-willow-bats"
     ]
   },
   {
     "slug": "bdmr-dynamic-pro-superb",
     "name": "BDMR Dynamic pro superb",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 50,000 / Piece",
     "image": "/assets/13-500x500-d4v6vbr0.jpg",
     "images": [
@@ -1014,13 +986,16 @@ export const products: Product[] = [
         "name": "Suitable For",
         "value": "Leather Ball"
       }
+    ],
+    "subcategorySlugs": [
+      "kashmir-willow-bats"
     ]
   },
   {
     "slug": "bdm-miniature-cricket-bat",
     "name": "BDM Miniature Cricket Bat",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 600 / Piece",
     "image": "/assets/bdm-miniature-cricket-bat-500x500-uamsb1ys.jpg",
     "images": [
@@ -1051,13 +1026,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "other-bats"
     ]
   },
   {
     "slug": "bdm-terminator-cricket-batting-gloves",
     "name": "BDM Terminator Cricket Batting Gloves",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 600",
     "image": "/assets/bdm-terminator-cricket-batting-gloves-25-1w9k1c8j.jpg",
     "images": [
@@ -1072,13 +1050,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "batting-gloves"
     ]
   },
   {
     "slug": "bdm-dynamic-power-x-treme-cricket-bat",
     "name": "BDM Dynamic Power X-Treme Cricket Bat",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 53,000 / Piece",
     "image": "/assets/bdm-dynamic-power-x-treme-cricket-bat-50-sv1df1nj.jpg",
     "images": [
@@ -1113,13 +1094,16 @@ export const products: Product[] = [
         "name": "Sweet Spot Location",
         "value": "Mid"
       }
+    ],
+    "subcategorySlugs": [
+      "kashmir-willow-bats"
     ]
   },
   {
     "slug": "bdm-x-plod-pro-cricket-batting-leg-guards",
     "name": "BDM X-Plod Pro Cricket Batting Leg Guards",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 5,100 / pair",
     "image": "/assets/bdm-x-plod-pro-cricket-batting-leg-guard-1cc4d2v1.png",
     "images": [
@@ -1134,13 +1118,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "batting-pads"
     ]
   },
   {
     "slug": "bdm-inner-supporters",
     "name": "BDM Inner Supporters",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 580 / Piece",
     "image": "/assets/bdm-inner-supporters-500x500-burout11.jpg",
     "images": [
@@ -1171,13 +1158,16 @@ export const products: Product[] = [
         "name": "Packaging Type",
         "value": "Box"
       }
+    ],
+    "subcategorySlugs": [
+      "supporters-bands"
     ]
   },
   {
     "slug": "bdm-amazer-cricket-kit-bag",
     "name": "BDM Amazer Cricket Kit Bag",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Kit Bag",
+    "categorySlug": "kit-bag",
     "price": "Rs 2,815 / Piece",
     "image": "/assets/cricket-kit-bag-bdm-amazer-500x500-11egumfb-2.jpg",
     "images": [
@@ -1187,13 +1177,16 @@ export const products: Product[] = [
       "/assets/cricket-kit-bag-bdm-amazer-125x125-14833f1s-2.jpg"
     ],
     "productCode": "",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "kit-bags"
+    ]
   },
   {
     "slug": "bdm-armstrong-wicket-keeping-gloves",
     "name": "BDM Armstrong Wicket Keeping Gloves",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 1,560 / pair",
     "image": "/assets/bdm-armstrong-wicket-keeping-gloves-500x-7vkqwpe1-3.jpg",
     "images": [
@@ -1203,13 +1196,16 @@ export const products: Product[] = [
       "/assets/bdm-armstrong-wicket-keeping-gloves-125x-ap6zpbui-2.jpg"
     ],
     "productCode": "",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "keeping-gloves"
+    ]
   },
   {
     "slug": "bdm-admiral-cricket-wicket-keeping-gloves",
     "name": "BDM Admiral Cricket Wicket Keeping Gloves",
-    "category": "Cricket Bats",
-    "categorySlug": "cricket-bat",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 4,220 / pair",
     "image": "/assets/bdm-admiral-cricket-wicket-keeping-glove-yvula11o-2.jpg",
     "images": [
@@ -1219,13 +1215,16 @@ export const products: Product[] = [
       "/assets/bdm-admiral-cricket-wicket-keeping-glove-11pgu2n6-2.jpg"
     ],
     "productCode": "",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "keeping-gloves"
+    ]
   },
   {
     "slug": "bdm-dynamic-power-super-cricket-bat",
     "name": "BDM Dynamic Power Super Cricket Bat",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 38,500 / Piece",
     "image": "/assets/bdm-dynamic-power-super-cricket-bat-500x-mdyzdqad.jpg",
     "images": [
@@ -1256,13 +1255,16 @@ export const products: Product[] = [
         "name": "Bow Size",
         "value": "Standard"
       }
+    ],
+    "subcategorySlugs": [
+      "english-willow-bats"
     ]
   },
   {
     "slug": "bdm-black-kaiser-english-willow-bat",
     "name": "BDM Black Kaiser English Willow Bat",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 99,000 / Piece",
     "image": "/assets/bdm-black-kaiser-english-willow-bat-500x-162u0nkw.jpg",
     "images": [
@@ -1293,13 +1295,16 @@ export const products: Product[] = [
         "name": "Bat Weight",
         "value": "Heavy Weight, Medium Weight, Light Weight"
       }
+    ],
+    "subcategorySlugs": [
+      "english-willow-bats"
     ]
   },
   {
     "slug": "bdm-dynamic-power-original-cricket-bat",
     "name": "BDM Dynamic Power Original Cricket Bat",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 35,000 / Piece",
     "image": "/assets/bdm-dynamic-power-original-cricket-bat-5-kr8k19bz-2.jpg",
     "images": [
@@ -1334,13 +1339,16 @@ export const products: Product[] = [
         "name": "Player Type",
         "value": "Intermediate, Expert, Advance"
       }
+    ],
+    "subcategorySlugs": [
+      "english-willow-bats"
     ]
   },
   {
     "slug": "bdm-aero-dynamic-cricket-bat",
     "name": "BDM Aero Dynamic Cricket Bat",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 42,999 / Piece",
     "image": "/assets/bdm-aero-dynamic-cricket-bat-500x500-16bksdv1-2.jpg",
     "images": [
@@ -1375,13 +1383,16 @@ export const products: Product[] = [
         "name": "Sweet Spot Location",
         "value": "Mid"
       }
+    ],
+    "subcategorySlugs": [
+      "english-willow-bats"
     ]
   },
   {
     "slug": "bdm-g6-cricket-bat",
     "name": "BDM G6 Cricket Bat",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 12,000 / Piece",
     "image": "/assets/bdm-g6-cricket-bat-500x500-wpyp2h7m.jpg",
     "images": [
@@ -1416,13 +1427,16 @@ export const products: Product[] = [
         "name": "Cover Included",
         "value": "Yes"
       }
+    ],
+    "subcategorySlugs": [
+      "english-willow-bats"
     ]
   },
   {
     "slug": "bdm-ambassador-cricket-bat",
     "name": "BDM Ambassador Cricket Bat",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 18,000 / Piece",
     "image": "/assets/bdm-ambassador-cricket-bat-500x500-15kk1k31.jpg",
     "images": [
@@ -1457,13 +1471,16 @@ export const products: Product[] = [
         "name": "Cover Included",
         "value": "Yes"
       }
+    ],
+    "subcategorySlugs": [
+      "english-willow-bats"
     ]
   },
   {
     "slug": "bdm-sting-cricket-bat",
     "name": "BDM Sting Cricket Bat",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 14,400 / Piece",
     "image": "/assets/bdm-sting-cricket-bat-500x500-6rfqmvz8.jpg",
     "images": [
@@ -1498,13 +1515,16 @@ export const products: Product[] = [
         "name": "Cover Included",
         "value": "Yes"
       }
+    ],
+    "subcategorySlugs": [
+      "english-willow-bats"
     ]
   },
   {
     "slug": "bdm-jai-ho-cricket-bat",
     "name": "BDM Jai Ho Cricket Bat",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 15,600 / Piece",
     "image": "/assets/bdm-jai-ho-cricket-bat-500x500-1thsj7o1.jpg",
     "images": [
@@ -1535,13 +1555,16 @@ export const products: Product[] = [
         "name": "Player Type",
         "value": "Beginner, Intermediate, Advance"
       }
+    ],
+    "subcategorySlugs": [
+      "english-willow-bats"
     ]
   },
   {
     "slug": "bdm-dynamic-power-xtreme-cricket-bat",
     "name": "Bdm Dynamic Power Xtreme Cricket Bat",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 53,000 / Piece",
     "image": "/assets/bdm-dynamic-power-xtreme-500x500-15d765oa.jpg",
     "images": [
@@ -1572,13 +1595,16 @@ export const products: Product[] = [
         "name": "Bat Size",
         "value": "Full Size"
       }
+    ],
+    "subcategorySlugs": [
+      "english-willow-bats"
     ]
   },
   {
     "slug": "bdm-baba-yaga-english-willow-bat",
     "name": "BDM Baba Yaga English Willow Bat",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 24,200 / Piece",
     "image": "/assets/bdm-baba-yaga-english-willow-bat-500x500-bw0muqc9.jpg",
     "images": [
@@ -1609,13 +1635,16 @@ export const products: Product[] = [
         "name": "Bat Size",
         "value": "Full Size"
       }
+    ],
+    "subcategorySlugs": [
+      "english-willow-bats"
     ]
   },
   {
     "slug": "bdm-dynamic-twenty-20-cricket-bat",
     "name": "BDM Dynamic Twenty-20 Cricket Bat",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 29,000 / Piece",
     "image": "/assets/bdm-dynamic-twenty-20-cricket-bat-500x50-19jlltvv.jpg",
     "images": [
@@ -1650,13 +1679,16 @@ export const products: Product[] = [
         "name": "Cover Included",
         "value": "Yes"
       }
+    ],
+    "subcategorySlugs": [
+      "english-willow-bats"
     ]
   },
   {
     "slug": "bdm-boom-cricket-bat",
     "name": "BDM Boom Cricket Bat",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 9,600 / Piece",
     "image": "/assets/bdm-boom-cricket-bat-500x500-1jntqih1.png",
     "images": [
@@ -1691,13 +1723,16 @@ export const products: Product[] = [
         "name": "Cover Included",
         "value": "Yes"
       }
+    ],
+    "subcategorySlugs": [
+      "english-willow-bats"
     ]
   },
   {
     "slug": "bdm-booster-cricket-bat",
     "name": "BDM Booster Cricket Bat",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 7,200 / Piece",
     "image": "/assets/bdm-booster-cricket-bat-500x500-1ozlsmf5.jpg",
     "images": [
@@ -1732,13 +1767,16 @@ export const products: Product[] = [
         "name": "Cover Included",
         "value": "Yes"
       }
+    ],
+    "subcategorySlugs": [
+      "english-willow-bats"
     ]
   },
   {
     "slug": "bdm-amazer-cricket-bat",
     "name": "BDM Amazer Cricket Bat",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 26,500 / Piece",
     "image": "/assets/bdm-amazer-cricket-bat-500x500-1kxteza1.jpg",
     "images": [
@@ -1773,13 +1811,16 @@ export const products: Product[] = [
         "name": "Bat Weight",
         "value": "Light Weight, Medium Weight, Heavy Weight"
       }
+    ],
+    "subcategorySlugs": [
+      "english-willow-bats"
     ]
   },
   {
     "slug": "bdm-titanium-cricket-bat",
     "name": "BDM Titanium Cricket Bat",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 84,600 / Piece",
     "image": "/assets/bdm-titanium-cricket-bat-500x500-j3j3pv1c.jpg",
     "images": [
@@ -1814,13 +1855,16 @@ export const products: Product[] = [
         "name": "Player Type",
         "value": "Intermediate, Advance, Expert"
       }
+    ],
+    "subcategorySlugs": [
+      "english-willow-bats"
     ]
   },
   {
     "slug": "bdm-force-twenty-20-cricket-bat",
     "name": "BDM Force Twenty-20 Cricket Bat",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 21,600 / Piece",
     "image": "/assets/bdm-force-twenty-20-cricket-bat-500x500-1sb7o5pr.jpg",
     "images": [
@@ -1855,13 +1899,16 @@ export const products: Product[] = [
         "name": "Cover Included",
         "value": "Yes"
       }
+    ],
+    "subcategorySlugs": [
+      "english-willow-bats"
     ]
   },
   {
     "slug": "bdm-master-blaster-cricket-bat",
     "name": "BDM Master Blaster Cricket Bat",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 21,600 / Piece",
     "image": "/assets/bdm-master-blaster-cricket-bat-500x500-bbdo3qd9.jpg",
     "images": [
@@ -1896,13 +1943,16 @@ export const products: Product[] = [
         "name": "Cover Included",
         "value": "Yes"
       }
+    ],
+    "subcategorySlugs": [
+      "english-willow-bats"
     ]
   },
   {
     "slug": "bdm-sixes-cricket-bat",
     "name": "BDM Sixes Cricket Bat",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 15,597 / Piece",
     "image": "/assets/bdm-sixes-cricket-bat-500x500-6i08b2v6.jpg",
     "images": [
@@ -1937,13 +1987,16 @@ export const products: Product[] = [
         "name": "Cover Included",
         "value": "Yes"
       }
+    ],
+    "subcategorySlugs": [
+      "english-willow-bats"
     ]
   },
   {
     "slug": "bdm-english-willow-cricket-bat",
     "name": "BDM English Willow Cricket Bat",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 38,500 / Piece",
     "image": "/assets/bdm-english-willow-cricket-bat-500x500-13zy9k11.jpg",
     "images": [
@@ -1974,13 +2027,16 @@ export const products: Product[] = [
         "name": "Bat Weight",
         "value": "Medium Weight, Heavy Weight, Light Weight"
       }
+    ],
+    "subcategorySlugs": [
+      "english-willow-bats"
     ]
   },
   {
     "slug": "bdm-admiral-wicket-keeping-inner-gloves",
     "name": "BDM Admiral Wicket keeping Inner Gloves",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 740 / pair",
     "image": "/assets/bdm-admiral-wicket-keeping-inner-gloves--15nzt8c9.jpg",
     "images": [
@@ -1990,13 +2046,16 @@ export const products: Product[] = [
       "/assets/bdm-admiral-wicket-keeping-inner-gloves--18hm20yp-2.jpg"
     ],
     "productCode": "WI01",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "keeping-gloves"
+    ]
   },
   {
     "slug": "bdm-fire-cricket-bat",
     "name": "BDM Fire Cricket Bat",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 19,200 / Piece",
     "image": "/assets/bdm-fire-cricket-bat-500x500-1q916d31.jpg",
     "images": [
@@ -2027,13 +2086,16 @@ export const products: Product[] = [
         "name": "Cover Included",
         "value": "Yes"
       }
+    ],
+    "subcategorySlugs": [
+      "english-willow-bats"
     ]
   },
   {
     "slug": "bdm-skin-fit-cotton-inner-gloves",
     "name": "BDM Skin Fit Cotton Inner Gloves",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 200 / pair",
     "image": "/assets/bdm-skin-fit-cotton-inner-gloves-500x500-17qjaq5q.jpg",
     "images": [
@@ -2043,13 +2105,16 @@ export const products: Product[] = [
       "/assets/skin-fit-wicket-keeping-inner-gloves-3-1-1t95f8t1.jpg"
     ],
     "productCode": "WI05",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "batting-gloves"
+    ]
   },
   {
     "slug": "bdm-cricket-bats-rubber-grips",
     "name": "BDM Cricket Bats Rubber Grips",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Accessories",
+    "categorySlug": "accessories",
     "price": "Rs 200 / Piece",
     "image": "/assets/bdm-cricket-bats-rubber-grips-500x500-ps7tge1n.png",
     "images": [
@@ -2084,13 +2149,16 @@ export const products: Product[] = [
         "name": "Usage Level",
         "value": "Professional"
       }
+    ],
+    "subcategorySlugs": [
+      "bat-grips"
     ]
   },
   {
     "slug": "bdm-dynamic-super-wicket-keeping-gloves",
     "name": "BDM Dynamic Super Wicket Keeping Gloves",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 200",
     "image": "/assets/bdm-dynamic-super-wicket-keeping-gloves--152gzrd1.jpg",
     "images": [
@@ -2100,13 +2168,16 @@ export const products: Product[] = [
       "/assets/bdm-dynamic-super-wicket-keeping-gloves--1w2lky3o.jpg"
     ],
     "productCode": "",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "keeping-gloves"
+    ]
   },
   {
     "slug": "bdm-commander-cricket-batting-pad",
     "name": "BDM Commander Cricket Batting Pad",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 2,420 / pair",
     "image": "/assets/bdm-commander-cricket-batting-pad-500x50-sgkw5v1y-2.jpg",
     "images": [
@@ -2137,13 +2208,16 @@ export const products: Product[] = [
         "name": "Pattern",
         "value": "Printed"
       }
+    ],
+    "subcategorySlugs": [
+      "batting-pads"
     ]
   },
   {
     "slug": "bdm-club-master-cricket-kit-bag",
     "name": "BDM Club Master Cricket Kit Bag",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Kit Bag",
+    "categorySlug": "kit-bag",
     "price": "Rs 2,625 / Piece",
     "image": "/assets/bdm-club-master-cricket-kit-bag-500x500-epamy717-2.jpg",
     "images": [
@@ -2153,13 +2227,16 @@ export const products: Product[] = [
       "/assets/bdm-club-master-cricket-kit-bag-125x125-hiwvqt1n-2.jpg"
     ],
     "productCode": "",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "kit-bags"
+    ]
   },
   {
     "slug": "bdm-aero-dynamic-wicket-keeping-gloves",
     "name": "BDM Aero Dynamic Wicket Keeping Gloves",
-    "category": "English Willow Bats",
-    "categorySlug": "bdm-english-willow-cricket-bat",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 5,960 / pair",
     "image": "/assets/bdm-aero-dynamic-wicket-keeping-gloves-5-1lgfr9rd-3.jpg",
     "images": [
@@ -2169,13 +2246,16 @@ export const products: Product[] = [
       "/assets/bdm-aero-dynamic-wicket-keeping-gloves-1-1oa202dt-2.jpg"
     ],
     "productCode": "",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "keeping-gloves"
+    ]
   },
   {
     "slug": "bdm-club-master-red-cricket-leather-ball",
     "name": "BDM Club Master Red Cricket Leather Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 600 / Piece",
     "image": "/assets/bdm-club-master-red-leather-ball-500x500-o5x03y1n.jpg",
     "images": [
@@ -2206,13 +2286,16 @@ export const products: Product[] = [
         "name": "Weight",
         "value": "155-165 gm"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-armstrong-red-cricket-leather-ball",
     "name": "BDM Armstrong Red Cricket Leather Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 720 / Piece",
     "image": "/assets/bdm-armstrong-cricket-leather-ball-500x5-16u730co.jpg",
     "images": [
@@ -2243,13 +2326,16 @@ export const products: Product[] = [
         "name": "Material",
         "value": "Leather"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-olympic-red-cricket-leather-ball",
     "name": "BDM Olympic Red Cricket Leather Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 370 / Piece",
     "image": "/assets/olympic-red-leather-ball-2-500x500-14mkcpf1.jpg",
     "images": [
@@ -2280,13 +2366,16 @@ export const products: Product[] = [
         "name": "Material",
         "value": "Leather"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-aero-dynamic-red-cricket-leather-ball",
     "name": "BDM Aero Dynamic Red Cricket Leather Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 2,680 / Piece",
     "image": "/assets/aero-dynamic-red-leather-ball-1-500x500-e2ll8bnl.jpg",
     "images": [
@@ -2317,13 +2406,16 @@ export const products: Product[] = [
         "name": "Material",
         "value": "Leather"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-aero-dynamic-white-cricket-leather-ball",
     "name": "BDM Aero Dynamic White Cricket Leather Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 2,680 / Piece",
     "image": "/assets/aero-dynamic-white-leather-ball-3-500x50-1x4mulh1.jpg",
     "images": [
@@ -2358,13 +2450,16 @@ export const products: Product[] = [
         "name": "Material",
         "value": "Leather"
       }
+    ],
+    "subcategorySlugs": [
+      "white-leather-balls"
     ]
   },
   {
     "slug": "bdm-ambassador-white-leather-cricket-ball",
     "name": "BDM Ambassador White Leather Cricket Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 800 / Piece",
     "image": "/assets/bdm-ambassador-white-leather-cricket-bal-72sxr61p.jpg",
     "images": [
@@ -2387,13 +2482,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "white-leather-balls"
     ]
   },
   {
     "slug": "bdm-commander-red-leather-ball",
     "name": "BDM Commander Red Leather Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 1,140 / Piece",
     "image": "/assets/bdm-commander-leather-ball-500x500-jc8itoka.jpg",
     "images": [
@@ -2424,13 +2522,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-royal-crown-cricket-white-leather-ball",
     "name": "BDM Royal Crown Cricket White Leather Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 699 / Piece",
     "image": "/assets/bdm-royal-crown-cricket-white-leather-ba-x0v6j11p.jpg",
     "images": [
@@ -2449,13 +2550,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "white-leather-balls"
     ]
   },
   {
     "slug": "bdm-world-cup-red-leather-cricket-ball",
     "name": "BDM World Cup Red Leather Cricket Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 560 / Piece",
     "image": "/assets/bdm-world-cup-red-leather-cricket-ball-5-f23t6k1u.jpg",
     "images": [
@@ -2478,13 +2582,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-thums-up-leather-ball",
     "name": "BDM Thums Up Leather Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 340 / Piece",
     "image": "/assets/bdm-thums-up-leather-ball-500x500-dpfg10hr.jpg",
     "images": [
@@ -2515,13 +2622,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-kingfisher-league-special-red-leather-ball",
     "name": "BDM Kingfisher League Special Red Leather Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 940 / Piece",
     "image": "/assets/bdm-kingfisher-league-special-red-leathe-zsa0udqp.jpg",
     "images": [
@@ -2552,13 +2662,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-hanging-and-knocking-ball",
     "name": "BDM Hanging & Knocking Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "",
     "image": "/assets/bdm-hanging-knocking-ball-500x500-elgade1b.jpg",
     "images": [
@@ -2589,13 +2702,16 @@ export const products: Product[] = [
         "name": "Surface Finish",
         "value": "Glossy"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-kapil-dev-autograph-leather-ball",
     "name": "BDM Kapil Dev Autograph Leather Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "",
     "image": "/assets/kapil-dev-autograph-leather-ball-1-500x5-jk7nbkd4.jpg",
     "images": [
@@ -2626,13 +2742,16 @@ export const products: Product[] = [
         "name": "Material",
         "value": "Leather"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-special-crown-leather-ball",
     "name": "BDM Special Crown Leather Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "",
     "image": "/assets/bdm-special-crown-leather-ball-500x500-1nu146tp.jpg",
     "images": [
@@ -2655,13 +2774,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-red-bullet-cricket-ball",
     "name": "BDM Red Bullet Cricket Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 600 / Piece",
     "image": "/assets/bdm-red-bullet-cricket-ball-500x500-84tkclv0.jpg",
     "images": [
@@ -2684,13 +2806,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-super-test-red-cricket-leather-ball",
     "name": "BDM Super Test Red Cricket Leather Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 880 / Piece",
     "image": "/assets/bdm-super-test-red-cricket-leather-ball--m7dnc119.jpg",
     "images": [
@@ -2721,13 +2846,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-agni-white-cricket-leather-ball",
     "name": "BDM Agni White Cricket Leather Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 640 / Piece",
     "image": "/assets/armstrong-cricket-ball-500x500-1w5bonw1.jpg",
     "images": [
@@ -2762,13 +2890,16 @@ export const products: Product[] = [
         "name": "Material",
         "value": "Leather"
       }
+    ],
+    "subcategorySlugs": [
+      "white-leather-balls"
     ]
   },
   {
     "slug": "bdm-agni-red-cricket-leather-ball",
     "name": "BDM Agni Red Cricket Leather Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 640 / Piece",
     "image": "/assets/bdm-agni-red-cricket-leather-ball-500x50-a3vech1x.jpg",
     "images": [
@@ -2803,13 +2934,16 @@ export const products: Product[] = [
         "name": "Material",
         "value": "Leather"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-amazer-red-cricket-leather-ball",
     "name": "BDM Amazer Red Cricket Leather Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 1,401 / Piece",
     "image": "/assets/bdm-amazer-red-cricket-leather-ball-500x-1cggr5y1.jpg",
     "images": [
@@ -2840,13 +2974,16 @@ export const products: Product[] = [
         "name": "Material",
         "value": "Leather"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-ambassador-red-cricket-leather-ball",
     "name": "BDM Ambassador Red Cricket Leather Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 820 / Piece",
     "image": "/assets/bdm-ambassador-cricket-leather-ball-500x-h408eu1n.jpg",
     "images": [
@@ -2877,13 +3014,16 @@ export const products: Product[] = [
         "name": "Material",
         "value": "Leather"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-quick-spring-red-cricket-leather-ball",
     "name": "BDM Quick Spring Red Cricket Leather Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 1,040 / Piece",
     "image": "/assets/bdm-quick-spring-cricket-leather-ball-50-d9wtiqzm.jpg",
     "images": [
@@ -2914,13 +3054,16 @@ export const products: Product[] = [
         "name": "Material",
         "value": "Leather"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-royal-crown-cricket-red-leather-ball",
     "name": "BDM Royal Crown Cricket Red Leather Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 700 / Piece",
     "image": "/assets/bdm-royal-crown-cricket-red-leather-ball-pxxeva13.jpg",
     "images": [
@@ -2947,13 +3090,16 @@ export const products: Product[] = [
         "name": "Country of Origin",
         "value": "Made in India"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-dynamic-power-cricket-leather-ball",
     "name": "BDM Dynamic Power Cricket Leather Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 1,976 / Piece",
     "image": "/assets/bdm-dynamic-power-cricket-leather-ball-5-zwlgop2a.jpg",
     "images": [
@@ -2984,13 +3130,17 @@ export const products: Product[] = [
         "name": "Material",
         "value": "Leather"
       }
+    ],
+    "subcategorySlugs": [
+      "white-leather-balls",
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-shooting-star-cricket-leather-ball",
     "name": "BDM Shooting Star Cricket Leather Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 560 / Piece",
     "image": "/assets/bdm-shooting-star-cricket-leather-ball-5-qy0ktl8m.jpg",
     "images": [
@@ -3021,13 +3171,16 @@ export const products: Product[] = [
         "name": "Material",
         "value": "Leather"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-commander-county-red-leather-ball",
     "name": "BDM Commander County Red Leather Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 1,140 / Piece",
     "image": "/assets/bdm-commander-county-red-leather-ball-50-1e53vtj1.jpg",
     "images": [
@@ -3058,13 +3211,16 @@ export const products: Product[] = [
         "name": "Material",
         "value": "Leather"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-kingfisher-club-red-leather-ball",
     "name": "BDM Kingfisher Club Red Leather Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 760 / Piece",
     "image": "/assets/bdm-kingfisher-club-red-leather-ball-500-umj5bd1h.jpg",
     "images": [
@@ -3095,13 +3251,16 @@ export const products: Product[] = [
         "name": "Material",
         "value": "Leather"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-kingfisher-match-red-leather-ball",
     "name": "BDM Kingfisher Match Red Leather Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 820 / Piece",
     "image": "/assets/kingfisher-match-red-leahter-ball-1-500x-1172ajv1.jpg",
     "images": [
@@ -3132,13 +3291,16 @@ export const products: Product[] = [
         "name": "Weight",
         "value": "155-165 gm"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-galaxy-leather-cricket-ball",
     "name": "BDM Galaxy Leather Cricket Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 700 / Piece",
     "image": "/assets/bdm-galaxy-leather-cricket-ball-500x500-1058u6n1.jpg",
     "images": [
@@ -3165,13 +3327,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "leather-cricket-ball",
     "name": "Leather Cricket Ball",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "",
     "image": "/assets/leather-cricket-ball-500x500-yneobc18.jpg",
     "images": [
@@ -3202,13 +3367,16 @@ export const products: Product[] = [
         "name": "I Deal In",
         "value": "New Only"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-cricket-ball-four-piece",
     "name": "BDM Cricket Ball-Four Piece",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "",
     "image": "/assets/four-piece-cricket-ball-500x500-1o1xxl71.jpg",
     "images": [
@@ -3239,13 +3407,16 @@ export const products: Product[] = [
         "name": "Country of Origin",
         "value": "Made in India"
       }
+    ],
+    "subcategorySlugs": [
+      "red-leather-balls"
     ]
   },
   {
     "slug": "bdm-master-blaster-cricket-helmet",
     "name": "BDM Master Blaster Cricket Helmet",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 1,995 / Piece",
     "image": "/assets/bdm-master-blaster-cricket-helmet-500x50-nkkaj81o.jpg",
     "images": [
@@ -3260,13 +3431,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "helmets"
     ]
   },
   {
     "slug": "bdm-dasher-batting-gloves",
     "name": "BDM Dasher Batting Gloves",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 3,700 / pair",
     "image": "/assets/bdm-dasher-batting-gloves-500x500-1eq8m3wh.jpg",
     "images": [
@@ -3297,13 +3471,16 @@ export const products: Product[] = [
         "name": "Pattern",
         "value": "Printed"
       }
+    ],
+    "subcategorySlugs": [
+      "batting-gloves"
     ]
   },
   {
     "slug": "bdm-titanium-batting-gloves",
     "name": "BDM Titanium Batting Gloves",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 4,600 / pair",
     "image": "/assets/bdm-titanium-batting-gloves-500x500-qdkqt9mj-2.jpg",
     "images": [
@@ -3318,13 +3495,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "batting-gloves"
     ]
   },
   {
     "slug": "bdm-amazer-batting-gloves",
     "name": "BDM Amazer Batting Gloves",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 2,340 / pair",
     "image": "/assets/bdm-amazer-batting-gloves-500x500-1y55msc1.jpg",
     "images": [
@@ -3339,13 +3519,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "batting-gloves"
     ]
   },
   {
     "slug": "bdm-hunk-english-willow-cricket-bat",
     "name": "BDM HUNK ENGLISH WILLOW CRICKET BAT",
-    "category": "Cricket Balls",
-    "categorySlug": "cricket-ball",
+    "category": "Bats",
+    "categorySlug": "bats",
     "price": "Rs 10,400 / Piece",
     "image": "/assets/bdm-hunk-english-willow-cricket-bat-500x-geahjg1t.jpg",
     "images": [
@@ -3376,13 +3559,16 @@ export const products: Product[] = [
         "name": "Color",
         "value": "White"
       }
+    ],
+    "subcategorySlugs": [
+      "english-willow-bats"
     ]
   },
   {
     "slug": "bdm-bullet-white-leather-ball",
     "name": "BDM Bullet White Leather Ball",
-    "category": "Leather Cricket Balls",
-    "categorySlug": "leather-cricket-ball",
+    "category": "Balls",
+    "categorySlug": "balls",
     "price": "Rs 600 / Piece",
     "image": "/assets/bdm-bullet-white-leather-ball-500x500-1asw0gc1.jpg",
     "images": [
@@ -3417,13 +3603,16 @@ export const products: Product[] = [
         "name": "Material",
         "value": "Leather"
       }
+    ],
+    "subcategorySlugs": [
+      "white-leather-balls"
     ]
   },
   {
     "slug": "bdm-spring-back-stump",
     "name": "BDM Spring Back Stump",
-    "category": "Leather Cricket Balls",
-    "categorySlug": "leather-cricket-ball",
+    "category": "Accessories",
+    "categorySlug": "accessories",
     "price": "Rs 2,600 / Piece",
     "image": "/assets/bdm-spring-back-stump-500x500-sl6w04wq.png",
     "images": [
@@ -3433,13 +3622,16 @@ export const products: Product[] = [
       "/assets/bdm-spring-back-stump-500x500-sl6w04wq-2.png"
     ],
     "productCode": "",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "stumps-bails"
+    ]
   },
   {
     "slug": "bdm-dynamic-super-batting-gloves",
     "name": "BDM Dynamic Super Batting Gloves",
-    "category": "Batting Gloves",
-    "categorySlug": "cricket-batting-gloves",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 3,900 / pair",
     "image": "/assets/bdm-dynamic-super-batting-gloves-500x500-hv06kamq.jpg",
     "images": [
@@ -3454,13 +3646,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "batting-gloves"
     ]
   },
   {
     "slug": "bdm-commander-batting-gloves",
     "name": "BDM Commander Batting Gloves",
-    "category": "Batting Gloves",
-    "categorySlug": "cricket-batting-gloves",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 2,850 / pair",
     "image": "/assets/bdm-commander-batting-gloves-500x500-zzvwnxks.jpg",
     "images": [
@@ -3475,13 +3670,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "batting-gloves"
     ]
   },
   {
     "slug": "bdm-master-blaster-batting-gloves",
     "name": "BDM Master Blaster Batting Gloves",
-    "category": "Batting Gloves",
-    "categorySlug": "cricket-batting-gloves",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 1,160 / pair",
     "image": "/assets/bdm-master-blaster-batting-gloves-500x50-1w7wghr6.jpg",
     "images": [
@@ -3496,13 +3694,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "batting-gloves"
     ]
   },
   {
     "slug": "bdm-galaxy-cricket-batting-glove",
     "name": "BDM Galaxy Cricket Batting Glove",
-    "category": "Batting Gloves",
-    "categorySlug": "cricket-batting-gloves",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 2,100 / pair",
     "image": "/assets/bdm-galaxy-cricket-batting-glove-500x500-yhsczu15.jpg",
     "images": [
@@ -3521,13 +3722,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "batting-gloves"
     ]
   },
   {
     "slug": "bdm-club-master-cricket-batting-gloves",
     "name": "BDM Club Master Cricket Batting Gloves",
-    "category": "Batting Gloves",
-    "categorySlug": "cricket-batting-gloves",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 740 / pair",
     "image": "/assets/bdm-club-master-cricket-batting-gloves-5-x8ybb018.jpg",
     "images": [
@@ -3542,13 +3746,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "batting-gloves"
     ]
   },
   {
     "slug": "bdm-player-s-autograph-cricket-batting-glove",
     "name": "BDM Player's Autograph Cricket Batting Glove",
-    "category": "Batting Gloves",
-    "categorySlug": "cricket-batting-gloves",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 800 / pair",
     "image": "/assets/bdm-player-s-autograph-cricket-batting-g-hpfywyi1.jpg",
     "images": [
@@ -3563,13 +3770,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "batting-gloves"
     ]
   },
   {
     "slug": "bdm-galaxy-wicket-keeping-inner-gloves",
     "name": "BDM Galaxy Wicket Keeping Inner Gloves",
-    "category": "Batting Gloves",
-    "categorySlug": "cricket-batting-gloves",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 330 / pair",
     "image": "/assets/bdm-galaxy-wicket-keeping-inner-gloves-5-1uj188cs.jpg",
     "images": [
@@ -3600,13 +3810,16 @@ export const products: Product[] = [
         "name": "Sport Type",
         "value": "Cricket"
       }
+    ],
+    "subcategorySlugs": [
+      "keeping-gloves"
     ]
   },
   {
     "slug": "bdm-dynamic-super-thigh-guard",
     "name": "BDM Dynamic Super Thigh Guard",
-    "category": "Batting Gloves",
-    "categorySlug": "cricket-batting-gloves",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 330",
     "image": "/assets/bdm-dynamic-super-thigh-guard-500x500-igghbr10.jpg",
     "images": [
@@ -3616,13 +3829,16 @@ export const products: Product[] = [
       "/assets/bdm-dynamic-super-thigh-guard-500x500-igghbr10-2.jpg"
     ],
     "productCode": "",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "thigh-guards"
+    ]
   },
   {
     "slug": "bdm-duffle-cricket-kit-bag",
     "name": "BDM Duffle Cricket Kit Bag",
-    "category": "Batting Gloves",
-    "categorySlug": "cricket-batting-gloves",
+    "category": "Kit Bag",
+    "categorySlug": "kit-bag",
     "price": "Rs 3,780",
     "image": "/assets/61azi8ywoll-sx679-500x500-bgdjt91u-2.jpg",
     "images": [
@@ -3653,13 +3869,16 @@ export const products: Product[] = [
         "name": "I Deal In",
         "value": "New Only"
       }
+    ],
+    "subcategorySlugs": [
+      "kit-bags"
     ]
   },
   {
     "slug": "bdm-commander-wicket-keeping-gloves",
     "name": "BDM Commander Wicket Keeping Gloves",
-    "category": "Wicket Keeping Gloves",
-    "categorySlug": "wicket-keeping-gloves",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 600 / pair",
     "image": "/assets/bdm-commander-wicket-keeping-gloves-500x-mtv3kj1f-3.jpg",
     "images": [
@@ -3690,13 +3909,16 @@ export const products: Product[] = [
         "name": "Country of Origin",
         "value": "Made in India"
       }
+    ],
+    "subcategorySlugs": [
+      "keeping-gloves"
     ]
   },
   {
     "slug": "bdm-calf-red-band",
     "name": "BDM Calf Red Band",
-    "category": "Wicket Keeping Gloves",
-    "categorySlug": "wicket-keeping-gloves",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 600",
     "image": "/assets/bdm-calf-red-band-500x500-1vsl206t-2.jpg",
     "images": [
@@ -3719,13 +3941,16 @@ export const products: Product[] = [
         "name": "Country of Origin",
         "value": "Made in India"
       }
+    ],
+    "subcategorySlugs": [
+      "supporters-bands"
     ]
   },
   {
     "slug": "bdm-duffle-wheeler-kit-bag",
     "name": "BDM Duffle Wheeler Kit Bag",
-    "category": "Wicket Keeping Gloves",
-    "categorySlug": "wicket-keeping-gloves",
+    "category": "Kit Bag",
+    "categorySlug": "kit-bag",
     "price": "Rs 4,200 / Piece",
     "image": "/assets/bdm-duffle-wheeler-kit-bag-500x500-mwo62l1n-2.jpg",
     "images": [
@@ -3735,13 +3960,16 @@ export const products: Product[] = [
       "/assets/bdm-duffle-wheeler-kit-bag-125x125-pqaev75a-2.jpg"
     ],
     "productCode": "",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "kit-bags"
+    ]
   },
   {
     "slug": "bdm-ambassador-wicket-keeping-inner-gloves",
     "name": "BDM Ambassador wicket keeping Inner Gloves",
-    "category": "Wicket Keeping Gloves",
-    "categorySlug": "cricket-wicketkeeping-gloves",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 250 / pair",
     "image": "/assets/bdm-cricket-inner-gloves-500x500-2wgwxqr3.jpg",
     "images": [
@@ -3756,13 +3984,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "keeping-gloves"
     ]
   },
   {
     "slug": "bdm-matador-wicket-keeping-gloves",
     "name": "BDM Matador Wicket Keeping Gloves",
-    "category": "Wicket Keeping Gloves",
-    "categorySlug": "cricket-wicketkeeping-gloves",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 2,290 / pair",
     "image": "/assets/bdm-matador-wicket-keeping-gloves-500x50-1vvgj081.jpg",
     "images": [
@@ -3793,13 +4024,16 @@ export const products: Product[] = [
         "name": "Color",
         "value": "Black"
       }
+    ],
+    "subcategorySlugs": [
+      "keeping-gloves"
     ]
   },
   {
     "slug": "bdm-amazer-wicket-keeping-gloves",
     "name": "BDM Amazer Wicket Keeping Gloves",
-    "category": "Wicket Keeping Gloves",
-    "categorySlug": "cricket-wicketkeeping-gloves",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 3,780 / pair",
     "image": "/assets/bdm-amazer-wicket-keeping-gloves-500x500-guumpp1q.jpg",
     "images": [
@@ -3830,13 +4064,16 @@ export const products: Product[] = [
         "name": "Finger Protection",
         "value": "With Finger Cap"
       }
+    ],
+    "subcategorySlugs": [
+      "keeping-gloves"
     ]
   },
   {
     "slug": "bdm-dynamic-power-cricket-kit-bag",
     "name": "BDM Dynamic Power Cricket Kit Bag",
-    "category": "Wicket Keeping Gloves",
-    "categorySlug": "cricket-wicketkeeping-gloves",
+    "category": "Kit Bag",
+    "categorySlug": "kit-bag",
     "price": "Rs 2,375 / Piece",
     "image": "/assets/cricket-kit-bag-bdm-dynamic-power-500x50-1pnrgc8x-3.jpg",
     "images": [
@@ -3846,13 +4083,16 @@ export const products: Product[] = [
       "/assets/cricket-kit-bag-bdm-dynamic-power-125x12-1shdp4u1-2.jpg"
     ],
     "productCode": "",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "kit-bags"
+    ]
   },
   {
     "slug": "bdm-admiral-cricket-batting-pad",
     "name": "BDM Admiral Cricket Batting Pad",
-    "category": "Batting Pads",
-    "categorySlug": "cricket-batting-pad",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 3,740 / pair",
     "image": "/assets/bdm-admiral-cricket-batting-pad-500x500-dpy6o0cp-2.jpg",
     "images": [
@@ -3887,13 +4127,16 @@ export const products: Product[] = [
         "name": "Strap Type",
         "value": "Velcro"
       }
+    ],
+    "subcategorySlugs": [
+      "batting-pads"
     ]
   },
   {
     "slug": "bdm-titanium-cricket-batting-pads",
     "name": "BDM Titanium Cricket Batting Pads",
-    "category": "Batting Pads",
-    "categorySlug": "cricket-batting-pad",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 5,600 / pair",
     "image": "/assets/bdm-titanium-cricket-batting-pads-500x50-1o4yir51-2.jpg",
     "images": [
@@ -3928,13 +4171,16 @@ export const products: Product[] = [
         "name": "Strap Type",
         "value": "Velcro"
       }
+    ],
+    "subcategorySlugs": [
+      "batting-pads"
     ]
   },
   {
     "slug": "bdm-mansfield-cricket-batting-pads",
     "name": "BDM Mansfield Cricket Batting Pads",
-    "category": "Batting Pads",
-    "categorySlug": "cricket-batting-pad",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 2,600 / pair",
     "image": "/assets/bdm-mansfield-cricket-batting-pads-500x5-1ueyg711-2.jpg",
     "images": [
@@ -3944,13 +4190,16 @@ export const products: Product[] = [
       "/assets/bdm-mansfield-cricket-batting-pads-500x5-rxkgpv1n.jpg"
     ],
     "productCode": "BL07",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "batting-pads"
+    ]
   },
   {
     "slug": "bdm-master-blaster-cricket-batting-pad",
     "name": "BDM Master Blaster Cricket Batting Pad",
-    "category": "Batting Pads",
-    "categorySlug": "cricket-batting-pad",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 2,800 / pair",
     "image": "/assets/bdm-master-blaster-cricket-batting-pad-5-uigel41c.jpg",
     "images": [
@@ -3977,13 +4226,16 @@ export const products: Product[] = [
         "name": "Item Code",
         "value": "BL12"
       }
+    ],
+    "subcategorySlugs": [
+      "batting-pads"
     ]
   },
   {
     "slug": "bdm-amazer-cricket-batting-pad",
     "name": "BDM Amazer Cricket Batting Pad",
-    "category": "Batting Pads",
-    "categorySlug": "cricket-batting-pad",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 2,340 / pair",
     "image": "/assets/bdm-amazer-cricket-batting-pad-500x500-sdlm5918.jpg",
     "images": [
@@ -4002,13 +4254,16 @@ export const products: Product[] = [
         "name": "Item Code",
         "value": "BL06"
       }
+    ],
+    "subcategorySlugs": [
+      "batting-pads"
     ]
   },
   {
     "slug": "bdm-aero-dynamic-cricket-batting-pad",
     "name": "BDM Aero Dynamic Cricket Batting Pad",
-    "category": "Batting Pads",
-    "categorySlug": "cricket-batting-pad",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 3,800 / pair",
     "image": "/assets/bdm-aero-dynamic-cricket-batting-pad-500-dtbe4ete.jpg",
     "images": [
@@ -4043,13 +4298,16 @@ export const products: Product[] = [
         "name": "Pattern",
         "value": "Printed"
       }
+    ],
+    "subcategorySlugs": [
+      "batting-pads"
     ]
   },
   {
     "slug": "bdm-x-plod-club-cricket-batting-pad",
     "name": "BDM X-Plod Club Cricket Batting Pad",
-    "category": "Batting Pads",
-    "categorySlug": "cricket-batting-pad",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 2,700 / pair",
     "image": "/assets/bdm-x-plod-club-cricket-batting-pad-500x-5afil31c.jpg",
     "images": [
@@ -4059,13 +4317,16 @@ export const products: Product[] = [
       "/assets/bdm-x-plod-club-cricket-batting-pad-125x-1fp4k351.jpg"
     ],
     "productCode": "115308211",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "batting-pads"
+    ]
   },
   {
     "slug": "bdm-ambassador-cricket-batting-pad",
     "name": "BDM Ambassador Cricket Batting Pad",
-    "category": "Batting Pads",
-    "categorySlug": "cricket-batting-pad",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 1,400 / pair",
     "image": "/assets/bdm-ambassador-cricket-batting-pad-500x5-mth3mo17.jpg",
     "images": [
@@ -4080,13 +4341,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "batting-pads"
     ]
   },
   {
     "slug": "bdm-untamed-cricket-batting-pad",
     "name": "BDM Untamed Cricket Batting Pad",
-    "category": "Batting Pads",
-    "categorySlug": "cricket-batting-pad",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 4,200 / pair",
     "image": "/assets/bdm-untamed-cricket-batting-pad-500x500-1g53wnl1.jpg",
     "images": [
@@ -4101,13 +4365,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "batting-pads"
     ]
   },
   {
     "slug": "bdm-armstrong-cricket-batting-pad",
     "name": "BDM Armstrong Cricket Batting Pad",
-    "category": "Batting Pads",
-    "categorySlug": "cricket-batting-pad",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 1,700 / pair",
     "image": "/assets/bdm-armstrong-cricket-batting-pad-500x50-1e564quv.jpg",
     "images": [
@@ -4122,13 +4389,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "batting-pads"
     ]
   },
   {
     "slug": "bdm-galaxy-cricket-batting-pad",
     "name": "BDM Galaxy Cricket Batting Pad",
-    "category": "Batting Pads",
-    "categorySlug": "cricket-batting-pad",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 1,930 / pair",
     "image": "/assets/bdm-galaxy-cricket-batting-pad-500x500-etqazh1f.jpg",
     "images": [
@@ -4143,13 +4413,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "batting-pads"
     ]
   },
   {
     "slug": "bdm-dynamic-super-cricket-batting-pad",
     "name": "BDM Dynamic Super Cricket Batting Pad",
-    "category": "Batting Pads",
-    "categorySlug": "cricket-batting-pad",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 3,740 / pair",
     "image": "/assets/bdm-dynamic-super-cricket-batting-pad-50-1w5jwkdw.jpg",
     "images": [
@@ -4164,13 +4437,16 @@ export const products: Product[] = [
         "name": "Size",
         "value": "Full Size"
       }
+    ],
+    "subcategorySlugs": [
+      "batting-pads"
     ]
   },
   {
     "slug": "bdm-aero-dynamic-wicket-keeping-pad",
     "name": "BDM Aero Dynamic Wicket Keeping Pad",
-    "category": "Batting Pads",
-    "categorySlug": "cricket-batting-pad",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 3,400 / pair",
     "image": "/assets/bdm-aero-dynamic-wicket-keeping-pad-500x-z2sln21c.jpg",
     "images": [
@@ -4197,13 +4473,16 @@ export const products: Product[] = [
         "name": "Number Of Straps",
         "value": "2"
       }
+    ],
+    "subcategorySlugs": [
+      "keeping-pads"
     ]
   },
   {
     "slug": "bdm-amzer-cricket-thigh-guard",
     "name": "BDM Amzer Cricket Thigh Guard",
-    "category": "Batting Pads",
-    "categorySlug": "cricket-batting-pad",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 3,400",
     "image": "/assets/bdm-amzer-cricket-thigh-guard-500x500-19udq30x-2.jpg",
     "images": [
@@ -4213,13 +4492,16 @@ export const products: Product[] = [
       "/assets/bdm-cricket-thigh-guard-500x500-d2dgrxt3.jpg"
     ],
     "productCode": "",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "thigh-guards"
+    ]
   },
   {
     "slug": "bdm-armstrong-wicket-keeping-inner-gloves",
     "name": "BDM Armstrong Wicket Keeping Inner Gloves",
-    "category": "Batting Pads",
-    "categorySlug": "cricket-batting-pad",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 250 / pair",
     "image": "/assets/bdm-armstrong-inner-gloves-500x500-17621uq5.jpg",
     "images": [
@@ -4234,13 +4516,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "keeping-gloves"
     ]
   },
   {
     "slug": "bdm-mansfield-super-max-thigh-guard",
     "name": "BDM Mansfield Super Max Thigh Guard",
-    "category": "Wicket Keeping Pads",
-    "categorySlug": "cricket-wicketkeeping-pad",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 840 / Piece",
     "image": "/assets/bdm-mansfield-super-max-thigh-guard-500x-1owt3vg1-2.jpg",
     "images": [
@@ -4250,13 +4535,16 @@ export const products: Product[] = [
       "/assets/bdm-mansfield-super-max-thigh-guard-500x-1owt3vg1-3.jpg"
     ],
     "productCode": "TG05",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "thigh-guards"
+    ]
   },
   {
     "slug": "bdm-dynamic-super-cricket-wicket-keeping-pad",
     "name": "BDM Dynamic Super Cricket Wicket keeping Pad",
-    "category": "Wicket Keeping Pads",
-    "categorySlug": "cricket-wicketkeeping-pad",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 3,200 / pair",
     "image": "/assets/bdm-dynamic-super-cricket-wicket-keeping-1q2ax2wq.jpg",
     "images": [
@@ -4291,13 +4579,16 @@ export const products: Product[] = [
         "name": "Strap Type",
         "value": "Velcro"
       }
+    ],
+    "subcategorySlugs": [
+      "keeping-pads"
     ]
   },
   {
     "slug": "bdm-jaguar-wicket-keeping-pad",
     "name": "BDM Jaguar Wicket Keeping Pad",
-    "category": "Wicket Keeping Pads",
-    "categorySlug": "cricket-wicketkeeping-pad",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 4,800 / pair",
     "image": "/assets/bdm-jaguar-wicket-keeping-pad-500x500-17ye2kc1.jpg",
     "images": [
@@ -4307,13 +4598,16 @@ export const products: Product[] = [
       "/assets/bdm-jaguar-wicket-keeping-pad-500x500-17ye2kc1-2.jpg"
     ],
     "productCode": "22354636",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "keeping-pads"
+    ]
   },
   {
     "slug": "bdm-galaxy-cricket-wicket-keeping-pad",
     "name": "BDM Galaxy Cricket Wicket Keeping Pad",
-    "category": "Wicket Keeping Pads",
-    "categorySlug": "cricket-wicketkeeping-pad",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 1,930 / pair",
     "image": "/assets/bdm-galaxy-cricket-wicket-keeping-pad-50-9d7aqq1k.jpg",
     "images": [
@@ -4348,13 +4642,16 @@ export const products: Product[] = [
         "name": "Strap Type",
         "value": "Velcro"
       }
+    ],
+    "subcategorySlugs": [
+      "keeping-pads"
     ]
   },
   {
     "slug": "bdm-admiral-cricket-wicket-keeping-pad",
     "name": "BDM Admiral Cricket Wicket Keeping Pad",
-    "category": "Wicket Keeping Pads",
-    "categorySlug": "cricket-wicketkeeping-pad",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 3,740 / pair",
     "image": "/assets/bdm-admiral-cricket-wicket-keeping-pad-5-lydzk31v.jpg",
     "images": [
@@ -4389,13 +4686,16 @@ export const products: Product[] = [
         "name": "Strap Type",
         "value": "Velcro"
       }
+    ],
+    "subcategorySlugs": [
+      "keeping-pads"
     ]
   },
   {
     "slug": "bdm-commander-wicket-keeping-pad",
     "name": "BDM Commander Wicket Keeping Pad",
-    "category": "Wicket Keeping Pads",
-    "categorySlug": "cricket-wicketkeeping-pad",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 1,850 / pair",
     "image": "/assets/bdm-commander-wicket-keeping-pad-500x500-15z351c1.jpg",
     "images": [
@@ -4410,13 +4710,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "keeping-pads"
     ]
   },
   {
     "slug": "bdm-aero-dynamic-cricket-helmet",
     "name": "BDM Aero Dynamic Cricket Helmet",
-    "category": "Cricket Helmets",
-    "categorySlug": "cricket-helmet",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 2,730 / Piece",
     "image": "/assets/bdm-aero-dynamic-cricket-helmet-500x500-14o62tp1.jpg",
     "images": [
@@ -4431,13 +4734,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "helmets"
     ]
   },
   {
     "slug": "bdm-titanium-cricket-helmet",
     "name": "BDM Titanium Cricket Helmet",
-    "category": "Cricket Helmets",
-    "categorySlug": "cricket-helmet",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 5,985 / Piece",
     "image": "/assets/bdm-titanium-cricket-helmet-500x500-1n8ui6a1.jpg",
     "images": [
@@ -4452,13 +4758,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "helmets"
     ]
   },
   {
     "slug": "bdm-dynamic-super-cricket-helmet",
     "name": "BDM Dynamic Super Cricket Helmet",
-    "category": "Cricket Helmets",
-    "categorySlug": "cricket-helmet",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 2,520 / Piece",
     "image": "/assets/bdm-dynamic-super-cricket-helmet-500x500-1g952j06.jpg",
     "images": [
@@ -4489,13 +4798,16 @@ export const products: Product[] = [
         "name": "Country of Origin",
         "value": "Made in India"
       }
+    ],
+    "subcategorySlugs": [
+      "helmets"
     ]
   },
   {
     "slug": "bdm-commander-cricket-helmet",
     "name": "BDM Commander Cricket Helmet",
-    "category": "Cricket Helmets",
-    "categorySlug": "cricket-helmet",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 1,470 / Piece",
     "image": "/assets/bdm-commander-cricket-helmet-500x500-vb45a01t.jpg",
     "images": [
@@ -4510,13 +4822,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "helmets"
     ]
   },
   {
     "slug": "bdm-commander-boys-cricket-helmet",
     "name": "BDM Commander Boys Cricket Helmet",
-    "category": "Cricket Helmets",
-    "categorySlug": "cricket-helmet",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 1,575 / Piece",
     "image": "/assets/bdm-commander-boys-cricket-helmet-500x50-1ky8btvt.jpg",
     "images": [
@@ -4531,13 +4846,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "helmets"
     ]
   },
   {
     "slug": "bdm-platinum-cricket-helmet",
     "name": "BDM Platinum Cricket Helmet",
-    "category": "Cricket Helmets",
-    "categorySlug": "cricket-helmet",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 5,985 / Piece",
     "image": "/assets/bdm-platinum-cricket-helmet-500x500-5f4we1hw.jpg",
     "images": [
@@ -4552,13 +4870,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "helmets"
     ]
   },
   {
     "slug": "bdm-wheeler-cricket-kit-bag",
     "name": "BDM Wheeler Cricket Kit Bag",
-    "category": "Kit Bags",
-    "categorySlug": "cricket-kit-bag",
+    "category": "Kit Bag",
+    "categorySlug": "kit-bag",
     "price": "",
     "image": "/assets/cricket-kit-bag-bdm-wheeler-500x500-1f9l3igi.jpg",
     "images": [
@@ -4568,13 +4889,16 @@ export const products: Product[] = [
       "/assets/cricket-kit-bag-bdm-wheeler-250x250-r32r4c1e.jpg"
     ],
     "productCode": "KB16",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "kit-bags"
+    ]
   },
   {
     "slug": "bdm-professional-cricket-kit-bag",
     "name": "BDM Professional Cricket Kit Bag",
-    "category": "Kit Bags",
-    "categorySlug": "cricket-kit-bag",
+    "category": "Kit Bag",
+    "categorySlug": "kit-bag",
     "price": "",
     "image": "/assets/cricket-kit-bag-bdm-club-master-500x500-8agr771l.jpg",
     "images": [
@@ -4584,13 +4908,16 @@ export const products: Product[] = [
       "/assets/cricket-kit-bag-bdm-club-master-250x250-1j52gs7i.jpg"
     ],
     "productCode": "KB17",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "kit-bags"
+    ]
   },
   {
     "slug": "bdm-aero-dynamic-kit-bag",
     "name": "BDM Aero Dynamic Kit Bag",
-    "category": "Kit Bags",
-    "categorySlug": "cricket-kit-bag",
+    "category": "Kit Bag",
+    "categorySlug": "kit-bag",
     "price": "Rs 4,070 / Piece",
     "image": "/assets/bdm-aero-dynamic-kit-bag-500x500-197wrmu5.jpg",
     "images": [
@@ -4605,13 +4932,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "kit-bags"
     ]
   },
   {
     "slug": "bdm-target-stumps",
     "name": "BDM Target Stumps",
-    "category": "Kit Bags",
-    "categorySlug": "cricket-kit-bag",
+    "category": "Accessories",
+    "categorySlug": "accessories",
     "price": "Rs 680 / Piece",
     "image": "/assets/bdm-target-stumps-500x500-16q2flyy.jpg",
     "images": [
@@ -4626,13 +4956,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "stumps-bails"
     ]
   },
   {
     "slug": "bdm-kits-size-4-5-6",
     "name": "BDM Kits Size 4,5,6.",
-    "category": "Kit Bags",
-    "categorySlug": "cricket-kit-bag",
+    "category": "Kit Bag",
+    "categorySlug": "kit-bag",
     "price": "",
     "image": "/assets/bdm-kits-size-4-5-6-500x500-olntkfgx.png",
     "images": [
@@ -4642,13 +4975,16 @@ export const products: Product[] = [
       "/assets/bdm-kits-size-4-5-6-125x125-1anc06o1.png"
     ],
     "productCode": "100160292",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "cricket-kits"
+    ]
   },
   {
     "slug": "bdm-armstrong-thigh-guard",
     "name": "BDM Armstrong Thigh Guard",
-    "category": "Protective Equipment",
-    "categorySlug": "cricket-protective-equipment",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 740 / Piece",
     "image": "/assets/bdm-armstrong-thigh-guard-500x500-nkkkvg13-2.jpg",
     "images": [
@@ -4663,13 +4999,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "thigh-guards"
     ]
   },
   {
     "slug": "bdm-armour-thigh-guard",
     "name": "BDM Armour Thigh Guard",
-    "category": "Protective Equipment",
-    "categorySlug": "cricket-protective-equipment",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 2,500 / Piece",
     "image": "/assets/bdm-armour-thigh-guard-500x500-p284ui1l-2.jpg",
     "images": [
@@ -4679,13 +5018,16 @@ export const products: Product[] = [
       "/assets/armour-thigh-guard-3-500x500-1kc670d1.jpg"
     ],
     "productCode": "TG08",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "thigh-guards"
+    ]
   },
   {
     "slug": "bdm-umpire-counter",
     "name": "BDM Umpire Counter",
-    "category": "Protective Equipment",
-    "categorySlug": "cricket-protective-equipment",
+    "category": "Accessories",
+    "categorySlug": "accessories",
     "price": "Rs 285 / Piece",
     "image": "/assets/bdm-umpire-counter-500x500-1vbx1nt1-2.jpg",
     "images": [
@@ -4712,13 +5054,16 @@ export const products: Product[] = [
         "name": "Country of Origin",
         "value": "Made in India"
       }
+    ],
+    "subcategorySlugs": [
+      "training-accessories"
     ]
   },
   {
     "slug": "bdm-admiral-abdominal-guard",
     "name": "BDM Admiral Abdominal Guard",
-    "category": "Protective Equipment",
-    "categorySlug": "cricket-protective-equipment",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 540 / Piece",
     "image": "/assets/bdm-admiral-abdominal-guard-500x500-1vqnftzv-2.jpg",
     "images": [
@@ -4733,13 +5078,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "abdominal-guards"
     ]
   },
   {
     "slug": "bdm-admiral-cricket-batting-elbow-guard",
     "name": "BDM Admiral Cricket Batting Elbow Guard",
-    "category": "Protective Equipment",
-    "categorySlug": "cricket-protective-equipment",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 420 / Piece",
     "image": "/assets/bdm-cricket-batting-elbow-guard-500x500-18way891.jpg",
     "images": [
@@ -4749,13 +5097,16 @@ export const products: Product[] = [
       "/assets/bdm-cricket-batting-elbow-guard-125x125-skudir1b.jpg"
     ],
     "productCode": "EG04",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "elbow-guards"
+    ]
   },
   {
     "slug": "bdm-amazer-cricket-chest-guard",
     "name": "BDM Amazer Cricket Chest Guard",
-    "category": "Protective Equipment",
-    "categorySlug": "cricket-protective-equipment",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 1,430 / Piece",
     "image": "/assets/bdm-cricket-chest-guard-500x500-3d35jrcg.jpg",
     "images": [
@@ -4765,13 +5116,16 @@ export const products: Product[] = [
       "/assets/bdm-cricket-chest-guard-125x125-yklrdd1k.jpg"
     ],
     "productCode": "22951388",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "chest-guards"
+    ]
   },
   {
     "slug": "bdm-commander-elbow-guard",
     "name": "BDM Commander Elbow Guard",
-    "category": "Protective Equipment",
-    "categorySlug": "cricket-protective-equipment",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 300 / Piece",
     "image": "/assets/bdm-commander-elbow-guard-500x500-1tjw4qe1.jpg",
     "images": [
@@ -4806,13 +5160,16 @@ export const products: Product[] = [
         "name": "Strap Type",
         "value": "Velcro"
       }
+    ],
+    "subcategorySlugs": [
+      "elbow-guards"
     ]
   },
   {
     "slug": "bdm-commander-chest-guard",
     "name": "BDM Commander Chest Guard",
-    "category": "Protective Equipment",
-    "categorySlug": "cricket-protective-equipment",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 880 / Piece",
     "image": "/assets/bdm-commander-chest-guard-500x500-yc36fghz.jpg",
     "images": [
@@ -4822,13 +5179,16 @@ export const products: Product[] = [
       "/assets/commander-chest-guard-2-125x125-z394ob1j.jpg"
     ],
     "productCode": "CG02",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "chest-guards"
+    ]
   },
   {
     "slug": "bdm-amazer-elbow-guard",
     "name": "BDM Amazer Elbow Guard",
-    "category": "Protective Equipment",
-    "categorySlug": "cricket-protective-equipment",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 650 / Piece",
     "image": "/assets/bdm-amazer-elbow-guard-500x500-d58ann1f.jpg",
     "images": [
@@ -4855,13 +5215,16 @@ export const products: Product[] = [
         "name": "Country of Origin",
         "value": "Made in India"
       }
+    ],
+    "subcategorySlugs": [
+      "elbow-guards"
     ]
   },
   {
     "slug": "bdm-catch-practice-bat",
     "name": "BDM Catch Practice Bat",
-    "category": "Protective Equipment",
-    "categorySlug": "cricket-protective-equipment",
+    "category": "Accessories",
+    "categorySlug": "accessories",
     "price": "Rs 3,300 / Piece",
     "image": "/assets/bdm-catch-practice-bat-500x500-1h43rjn3.jpg",
     "images": [
@@ -4876,13 +5239,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "training-accessories"
     ]
   },
   {
     "slug": "bdm-stumps-m-c-c-english-pattern",
     "name": "BDM Stumps M.C.C. English Pattern",
     "category": "Accessories",
-    "categorySlug": "cricket-accessories",
+    "categorySlug": "accessories",
     "price": "Rs 1,900 / Piece",
     "image": "/assets/bdm-stumps-m-c-c-english-pattern-500x500-1qdabwi1.jpg",
     "images": [
@@ -4892,13 +5258,16 @@ export const products: Product[] = [
       "/assets/bdm-stumps-m-c-c-english-pattern-250x250-126rzied.jpg"
     ],
     "productCode": "ST03",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "stumps-bails"
+    ]
   },
   {
     "slug": "bdm-dynamic-power-stumps",
     "name": "BDM Dynamic Power Stumps",
     "category": "Accessories",
-    "categorySlug": "cricket-accessories",
+    "categorySlug": "accessories",
     "price": "Rs 6,000 / Piece",
     "image": "/assets/bdm-dynamic-power-stumps-500x500-xo7pzy4l.jpg",
     "images": [
@@ -4933,13 +5302,16 @@ export const products: Product[] = [
         "name": "Usage Level",
         "value": "Match"
       }
+    ],
+    "subcategorySlugs": [
+      "stumps-bails"
     ]
   },
   {
     "slug": "bdm-knee-band",
     "name": "BDM Knee Band",
-    "category": "Accessories",
-    "categorySlug": "cricket-accessories",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 250 / Piece",
     "image": "/assets/bdm-knee-band-500x500-1tnybx31.jpg",
     "images": [
@@ -4970,13 +5342,16 @@ export const products: Product[] = [
         "name": "Color",
         "value": "Black"
       }
+    ],
+    "subcategorySlugs": [
+      "supporters-bands"
     ]
   },
   {
     "slug": "bdm-panama-cricket-hat",
     "name": "BDM Panama Cricket Hat",
-    "category": "Cricket Hats",
-    "categorySlug": "cricket-hat",
+    "category": "Clothing",
+    "categorySlug": "clothing",
     "price": "Rs 460 / Piece",
     "image": "/assets/bdm-panama-cricket-hat-500x500-1lvp1m14-2.jpg",
     "images": [
@@ -4986,13 +5361,16 @@ export const products: Product[] = [
       "/assets/bdm-cricket-hat-500x500-1qvhypp1.jpg"
     ],
     "productCode": "22950552",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "hats-caps"
+    ]
   },
   {
     "slug": "bdm-white-cricket-wear",
     "name": "BDM White Cricket Wear",
-    "category": "Cricket Wear",
-    "categorySlug": "white-cricket-wear",
+    "category": "Clothing",
+    "categorySlug": "clothing",
     "price": "",
     "image": "/assets/bdm-white-cricket-wear-500x500-1l1elqkp.jpg",
     "images": [
@@ -5007,13 +5385,16 @@ export const products: Product[] = [
         "name": "Color",
         "value": "White"
       }
+    ],
+    "subcategorySlugs": [
+      "cricket-wear"
     ]
   },
   {
     "slug": "bdm-world-cup-cricket-batting-pad",
     "name": "BDM World Cup Cricket Batting Pad",
-    "category": "Academy Equipment",
-    "categorySlug": "cricket-battingpad-sportsacademy",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 2,900 / pair",
     "image": "/assets/bdm-world-cup-cricket-batting-pad-500x50-1omx6yj2-2.jpg",
     "images": [
@@ -5028,13 +5409,16 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "batting-pads"
     ]
   },
   {
     "slug": "bdm-cricket-socks",
     "name": "BDM Cricket Socks",
-    "category": "Cricket Accessories",
-    "categorySlug": "cricket-equipments",
+    "category": "Clothing",
+    "categorySlug": "clothing",
     "price": "Rs 280 / pair",
     "image": "/assets/bdm-cricket-socks-500x500-1oz2mclv-2.png",
     "images": [
@@ -5069,13 +5453,16 @@ export const products: Product[] = [
         "name": "Size",
         "value": "Small, Medium, XL, XXL"
       }
+    ],
+    "subcategorySlugs": [
+      "socks"
     ]
   },
   {
     "slug": "bdm-calf-blue-band",
     "name": "BDM Calf Blue Band",
-    "category": "Cricket Accessories",
-    "categorySlug": "cricket-equipments",
+    "category": "Protective Gear",
+    "categorySlug": "protective-gear",
     "price": "Rs 220 / Piece",
     "image": "/assets/bdm-calf-blue-band-500x500-350tt71a-2.png",
     "images": [
@@ -5102,13 +5489,16 @@ export const products: Product[] = [
         "name": "Type of Equipments",
         "value": "Cricket"
       }
+    ],
+    "subcategorySlugs": [
+      "supporters-bands"
     ]
   },
   {
     "slug": "bdm-cricket-cap",
     "name": "BDM Cricket Cap",
-    "category": "Cricket Accessories",
-    "categorySlug": "cricket-equipments",
+    "category": "Clothing",
+    "categorySlug": "clothing",
     "price": "Rs 670 / Set",
     "image": "/assets/bdm-cricket-cap-500x500-fvywsy1a-2.jpg",
     "images": [
@@ -5118,13 +5508,16 @@ export const products: Product[] = [
       "/assets/bdm-cricket-cap-500x500-1nit5n31.jpg"
     ],
     "productCode": "22951406",
-    "specifications": []
+    "specifications": [],
+    "subcategorySlugs": [
+      "hats-caps"
+    ]
   },
   {
     "slug": "bdm-cricket-ball-mallet-hammer-and-gripping-cone",
     "name": "BDM Cricket Ball Mallet , Hammer & Gripping Cone",
-    "category": "Cricket Accessories",
-    "categorySlug": "cricket-equipments",
+    "category": "Accessories",
+    "categorySlug": "accessories",
     "price": "",
     "image": "/assets/bdm-cricket-ball-mallet-2c-hammer-500x50-1li4qbl1-2.jpg",
     "images": [
@@ -5139,6 +5532,29 @@ export const products: Product[] = [
         "name": "Condition",
         "value": "New"
       }
+    ],
+    "subcategorySlugs": [
+      "training-accessories"
     ]
   }
 ];
+
+export const categories: ProductCategory[] = categoryDefinitions.map((category) => ({
+  ...category,
+  count: products.filter((product) => product.categorySlug === category.slug).length,
+  subcategories: category.subcategories.map((subcategory) => ({
+    ...subcategory,
+    count: products.filter((product) => product.categorySlug === category.slug && product.subcategorySlugs.includes(subcategory.slug)).length,
+  })).filter((subcategory) => subcategory.count > 0),
+}));
+
+export function getCategoryBySlug(slug: string): ProductCategory | undefined {
+  return categories.find((category) => category.slug === slug);
+}
+
+export function getProductSubcategories(product: Pick<Product, "categorySlug" | "subcategorySlugs">): ProductSubcategory[] {
+  const category = getCategoryBySlug(product.categorySlug);
+  return category?.subcategories.filter((subcategory) => product.subcategorySlugs.includes(subcategory.slug)) ?? [];
+}
+
+export { legacyCategoryRedirects };
