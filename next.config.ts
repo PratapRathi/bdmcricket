@@ -1,5 +1,5 @@
 import type { NextConfig } from "next";
-import { sitePages } from "./data/routes";
+import { editorialRouteSlugs, legacyRouteRedirects } from "./lib/config/site-routes";
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -13,13 +13,21 @@ const nextConfig: NextConfig = {
       },
     },
   },
-  async rewrites() {
+  async redirects() {
+    const editorialAliases = editorialRouteSlugs.map((slug) => ({
+      source: `/${slug}.html`,
+      destination: `/${slug}`,
+      permanent: true,
+    }));
+    const legacyAliases = Object.entries(legacyRouteRedirects).flatMap(([slug, destination]) => [
+      { source: `/${slug}`, destination, permanent: true },
+      { source: `/${slug}.html`, destination, permanent: true },
+    ]);
+
     return [
-      { source: "/index.html", destination: "/" },
-      ...sitePages.map((slug) => ({
-        source: `/${slug}.html`,
-        destination: `/${slug}`,
-      })),
+      { source: "/index.html", destination: "/", permanent: true },
+      ...editorialAliases,
+      ...legacyAliases,
     ];
   },
 };

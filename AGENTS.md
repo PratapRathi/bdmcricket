@@ -1,9 +1,17 @@
-<!-- BEGIN:nextjs-agent-rules -->
+# Instructions for AI Coding Agents
 
-## This is NOT the Next.js you know
+Before making any changes:
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+1. Read PROJECT_MEMORY.md.
+2. Read relevant documentation under docs/.
+3. Understand the existing feature module.
+4. Follow the established architectural conventions.
+5. Do not introduce a new architectural pattern without
+   evaluating its impact on the existing application.
 
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+After completing significant architectural changes:
 
-<!-- END:nextjs-agent-rules -->
+1. Update PROJECT_MEMORY.md.
+2. Update relevant documentation.
+3. Record important architectural decisions.
+4. Update pending tasks and known limitations.

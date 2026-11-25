@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { connection } from "next/server";
 import { Suspense } from "react";
-import { HomePage } from "@/components/home/home-page";
+import { HomePage } from "@/features/home/components/home-page";
 import { getCompanyContent } from "@/lib/data/company";
 
 export async function generateMetadata(): Promise<Metadata> {

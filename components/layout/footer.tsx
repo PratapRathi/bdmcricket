@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { ProductCategory } from "@/lib/catalog-types";
+import type { ProductCategory } from "@/features/products/types/product.types";
 import type { getCompanyContent } from "@/lib/data/company";
 
 type FooterProps = { categories: ProductCategory[]; company: Awaited<ReturnType<typeof getCompanyContent>>["company"] };

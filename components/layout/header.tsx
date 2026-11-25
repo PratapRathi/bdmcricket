@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import type { ProductCategory } from "@/lib/catalog-types";
+import type { ProductCategory } from "@/features/products/types/product.types";
 import type { getCompanyContent } from "@/lib/data/company";
 import { ButtonLink } from "@/components/ui/button-link";
 

@@ -112,6 +112,7 @@ model MediaAsset {
   updatedAt      DateTime      @updatedAt
 }
 
+/// Retained for compatibility with the earlier import; public redirects are configured in lib/config/site-routes.ts.
 model LegacyRedirect {
   sourceSlug  String   @id
   destination String
