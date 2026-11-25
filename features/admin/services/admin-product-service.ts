@@ -1,6 +1,7 @@
 import "server-only";
 
 import { prisma } from "@/lib/prisma";
+import { mediaUrl } from "@/lib/media-url";
 import type { AdminIdentity } from "@/lib/admin-auth/session";
 import type { z } from "zod";
 import { productAdminSchema } from "@/features/admin/validation/schemas";
@@ -54,7 +55,7 @@ export async function listAdminProducts() {
       imageKeys: product.images.map(({ assetKey }) => assetKey),
     })),
     categories,
-    media: media.map(({ byteSize, ...asset }) => ({ ...asset, byteSize: byteSize.toString() })),
+    media: media.map(({ byteSize, ...asset }) => ({ ...asset, byteSize: byteSize.toString(), url: mediaUrl(asset.key) })),
   };
 }
 

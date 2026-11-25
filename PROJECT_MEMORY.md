@@ -13,7 +13,7 @@ The site represents B. D. Mahajan & Sons / BDM Cricket, a cricket equipment busi
 - Next.js 16.4.6 App Router; React 19.3; TypeScript 5 strict mode.
 - Tailwind CSS 4 with existing branded global CSS.
 - Prisma 7 with PostgreSQL via `pg` and `@prisma/adapter-pg`.
-- S3-compatible media storage via AWS SDK v3, streamed through `/media/*`.
+- S3-compatible media storage via AWS SDK v3, streamed through `/media/*`; no runtime media is retained in `public/assets`.
 - TanStack Query 5 and development-only React Query Devtools for product browser and admin server-state.
 - Zod 4 for public and admin request validation.
 - GSAP, `@gsap/react`, and `react-vertical-timeline-component` for existing interactions and timeline.
@@ -39,6 +39,7 @@ The site represents B. D. Mahajan & Sons / BDM Cricket, a cricket equipment busi
 - `lib/seo`: editorial/category metadata helpers.
 - `providers`: root QueryClient provider.
 - `prisma`: schema, migrations, seed fixtures.
+- `scripts/verify-media-storage.ts`: verifies every registered media record has a matching object in S3-compatible storage.
 - `docs`: architecture, routing, engineering guides.
 
 ## 6. Routing conventions
@@ -108,6 +109,7 @@ Use Tailwind utilities for normal layout and spacing. `app/globals.css` owns bra
 - Page content depends on database records being imported. Missing required company/catalogue content may surface through the error boundary.
 - `/api/products` currently has a short private cache header and is not configured for shared CDN caching.
 - Production builds emit the `pg-connection-string` SSL mode forward-compatibility warning; review `DATABASE_URL` TLS configuration before the pg 9 upgrade.
+- The media library list is capped at 500 recent assets; add media search/pagination before the asset catalogue grows further.
 
 ## 16. Pending tasks
 
@@ -118,6 +120,7 @@ Use Tailwind utilities for normal layout and spacing. `app/globals.css` owns bra
 - Add browser-level workflows for admin login, catalog/content changes, contact submissions, and media management.
 - Decide contact retention, admin MFA/RBAC, and backup/restore policies before expanding staff access.
 - Decide whether/when to remove the retained legacy redirect table in a separately reviewed data migration.
+- Add image dimensions, format conversion, and malware scanning if upload volume or staff access expands.
 
 ## 17. Future development roadmap
 

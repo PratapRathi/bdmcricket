@@ -11,9 +11,10 @@ type ProductBrowserProps = {
   categories: ProductCategory[];
   initialCategorySlug?: string;
   lockedCategorySlug?: string;
+  groupBySubcategory?: boolean;
 };
 
-export function ProductBrowser({ products, categories, initialCategorySlug, lockedCategorySlug }: ProductBrowserProps) {
+export function ProductBrowser({ products, categories, initialCategorySlug, lockedCategorySlug, groupBySubcategory = false }: ProductBrowserProps) {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(initialCategorySlug ?? "");
@@ -39,9 +40,14 @@ export function ProductBrowser({ products, categories, initialCategorySlug, lock
     subcategorySlug: selectedSubcategory,
     sort,
   };
-  const hasDefaultFilters = !filters.query && !filters.categorySlug && !filters.subcategorySlug && filters.sort === "featured";
+  const hasDefaultFilters = !filters.query
+    && !filters.subcategorySlug
+    && filters.sort === "featured"
+    && (lockedCategorySlug ? filters.categorySlug === lockedCategorySlug : !filters.categorySlug);
   const productsQuery = useProducts(filters, hasDefaultFilters ? products : undefined);
   const filtered = productsQuery.data?.data ?? [];
+  const groupedCategory = lockedCategorySlug ? categories.find((category) => category.slug === lockedCategorySlug) : undefined;
+  const showSubcategoryGroups = groupBySubcategory && hasDefaultFilters && Boolean(groupedCategory);
 
   function resetFilters() {
     setQuery("");
@@ -102,14 +108,30 @@ export function ProductBrowser({ products, categories, initialCategorySlug, lock
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4" aria-hidden="true">{Array.from({ length: 8 }, (_, index) => <div key={index} className="aspect-[4/4.8] animate-pulse bg-ink/5" />)}</div>
       ) : filtered.length ? (
         <>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 sm:gap-y-14 lg:grid-cols-3 xl:grid-cols-4">
-            {filtered.slice(0, visible).map((product, index) => <ProductCard key={product.slug} product={product} index={index} />)}
-          </div>
-          {visible < filtered.length && (
-            <div className="mt-14 text-center">
-              <button className="load-more" type="button" onClick={() => setVisible((amount) => amount + 12)}>Load more products <span aria-hidden="true">↓</span></button>
+          {showSubcategoryGroups ? <div className="space-y-16 lg:space-y-20">
+            {groupedCategory?.subcategories.map((subcategory) => {
+              const items = filtered.filter((product) => product.subcategorySlugs.includes(subcategory.slug));
+              if (!items.length) return null;
+              return <section key={subcategory.slug} id={subcategory.slug} className="scroll-mt-32">
+                <div className="mb-7 flex flex-col justify-between gap-4 border-b border-ink/10 pb-5 sm:flex-row sm:items-end">
+                  <div><p className="eyebrow text-brand-red">{groupedCategory.name}</p><h2 className="mt-3 font-display text-3xl font-semibold tracking-[-0.05em] sm:text-4xl">{subcategory.name}</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-ink/55">{subcategory.description}</p></div>
+                  <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.14em] text-ink/40">{items.length} {items.length === 1 ? "product" : "products"}</span>
+                </div>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 sm:gap-y-14 lg:grid-cols-3 xl:grid-cols-4">
+                  {items.map((product, index) => <ProductCard key={product.slug} product={product} index={index} />)}
+                </div>
+              </section>;
+            })}
+          </div> : <>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 sm:gap-y-14 lg:grid-cols-3 xl:grid-cols-4">
+              {filtered.slice(0, visible).map((product, index) => <ProductCard key={product.slug} product={product} index={index} />)}
             </div>
-          )}
+            {visible < filtered.length && (
+              <div className="mt-14 text-center">
+                <button className="load-more" type="button" onClick={() => setVisible((amount) => amount + 12)}>Load more products <span aria-hidden="true">↓</span></button>
+              </div>
+            )}
+          </>}
         </>
       ) : (
         <div className="empty-state"><p className="font-display text-3xl font-semibold">No products match that search.</p><button type="button" className="mt-5 text-sm font-semibold text-brand-red underline underline-offset-4" onClick={resetFilters}>Clear filters</button></div>

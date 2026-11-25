@@ -11,7 +11,7 @@
 1. Run `npm install`.
 2. Copy `.env.example` to `.env` and fill `DATABASE_URL`, `AWS_ENDPOINT_URL_S3`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, and `S3_BUCKET_NAME`.
 3. Run `npm run db:migrate` to apply checked-in migrations.
-4. If setting up the original content, run `npm run data:migrate` to upload/register media and import source records.
+4. If setting up the original content, run `npm run data:migrate` to upload/register media and import source records. It reads the original clone at `../bdmcricket/assets` by default, or the directory supplied through `MEDIA_IMPORT_DIRECTORY`; it never reads from this app's `public/` directory.
 5. Run `npm run dev`.
 
 ## Create the first administrator
@@ -20,7 +20,7 @@ Admin login intentionally has no seeded or default credentials. Set a private `A
 
 The admin database migration adds stock fields, administrator/audit tables, and contact submissions. Apply it with `npm run db:migrate` before bootstrapping. Admin media upload also requires the configured S3 bucket.
 
-Do not commit `.env` or expose server-only settings to client code. `npm run db:seed` seeds content records when media assets are already registered; rerun `data:migrate` only when the source import is intended.
+Do not commit `.env` or expose server-only settings to client code. `npm run db:seed` seeds content records when media assets are already registered; rerun `data:migrate` only when the source import is intended. Use `npm run media:verify` to confirm every database-registered media object is present in the configured bucket before pruning a migration source.
 
 ## Quality commands
 

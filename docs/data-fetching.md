@@ -14,7 +14,7 @@ The API validates `q`, `category`, `subcategory`, and `sort` with Zod. `getProdu
 
 `features/admin/components/admin-api.ts` centralizes protected client requests and query keys. Admin screens query `/api/admin/*` through TanStack Query; they do not import Prisma or S3 code. Mutations invalidate the narrow related keys (`admin/products`, `admin/categories`, `admin/content`, `admin/enquiries`, `admin/media`, and `admin/overview`). The authenticated admin layout performs the initial session check, and each API request verifies the cookie again.
 
-The public contact form posts to `/api/contact`. It does not use TanStack Query because it is a one-off submission rather than data that needs a shared client cache.
+The public contact form posts to `/api/contact`. It does not use TanStack Query because it is a one-off submission rather than data that needs a shared client cache. Product editing uses the protected `/api/admin/media` upload handler: the browser previews selected files locally, uploads them to S3-compatible storage, receives media-library records back, and saves only their database-backed keys with the product.
 
 ## Prefetching and hydration
 

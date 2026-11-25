@@ -13,6 +13,7 @@
     "db:migrate": "prisma migrate deploy",
     "db:seed": "prisma db seed",
     "data:migrate": "tsx scripts/migrate-site-data.ts",
+    "media:verify": "tsx scripts/verify-media-storage.ts",
     "admin:bootstrap": "tsx scripts/bootstrap-admin.ts"
   },
   "dependencies": {

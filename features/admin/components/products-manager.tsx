@@ -1,13 +1,14 @@
 "use client";
 
-import { useMemo, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { adminApi, adminKeys } from "@/features/admin/components/admin-api";
 import { ActionButton, AdminPage, ErrorMessage, Field, LoadingMessage, Panel, SelectField } from "@/features/admin/components/admin-ui";
+import { ProductImagePicker, type AdminMediaAsset } from "@/features/admin/components/product-image-picker";
 
 type Category = { id: number; name: string; subcategories: { id: number; name: string; isPublished: boolean }[] };
 type Product = { id: number; slug: string; name: string; categoryId: number; price: string; productCode: string; sortOrder: number; isPublished: boolean; isFeatured: boolean; featuredSortOrder: number | null; stockQuantity: number; lowStockThreshold: number; mainImageKey: string | null; imageKeys: string[]; subcategoryIds: number[]; specifications: { name: string; value: string }[] };
-type ProductData = { products: Product[]; categories: Category[]; media: { key: string }[] };
+type ProductData = { products: Product[]; categories: Category[]; media: AdminMediaAsset[] };
 type Draft = Omit<Product, "id">;
 const blank: Draft = { slug: "", name: "", categoryId: 0, price: "", productCode: "", sortOrder: 0, isPublished: true, isFeatured: false, featuredSortOrder: null, stockQuantity: 0, lowStockThreshold: 5, mainImageKey: null, imageKeys: [], subcategoryIds: [], specifications: [] };
 
@@ -15,25 +16,26 @@ export function ProductsManager() {
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState<Product | null>(null);
   const [draft, setDraft] = useState<Draft>(blank);
+  const [uploadedMedia, setUploadedMedia] = useState<AdminMediaAsset[]>([]);
   const [error, setError] = useState("");
   const data = useQuery({ queryKey: adminKeys.products, queryFn: () => adminApi<ProductData>("/api/admin/products") });
   const save = useMutation({ mutationFn: (value: Draft) => adminApi<Product>(editing ? `/api/admin/products/${editing.id}` : "/api/admin/products", { method: editing ? "PATCH" : "POST", json: value }), onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: adminKeys.products }); await queryClient.invalidateQueries({ queryKey: adminKeys.overview }); setEditing(null); setDraft(blank); setError(""); }, onError: (cause) => setError(cause instanceof Error ? cause.message : "Could not save product.") });
   const remove = useMutation({ mutationFn: (id: number) => adminApi(`/api/admin/products/${id}`, { method: "DELETE" }), onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: adminKeys.products }); await queryClient.invalidateQueries({ queryKey: adminKeys.overview }); } });
   const categories = data.data?.categories ?? [];
   const activeCategory = categories.find((category) => category.id === Number(draft.categoryId));
-  const mediaKeys = useMemo(() => data.data?.media.map((asset) => asset.key) ?? [], [data.data?.media]);
+  const media = [...uploadedMedia, ...(data.data?.media ?? [])].filter((asset, index, all) => all.findIndex((candidate) => candidate.key === asset.key) === index);
 
   function startEdit(product?: Product) {
     setEditing(product ?? null);
-    setDraft(product ? { ...product, subcategoryIds: [...product.subcategoryIds], imageKeys: [...product.imageKeys], specifications: [...product.specifications] } : { ...blank, categoryId: categories[0]?.id ?? 0 });
+    setDraft(product ? { ...product, subcategoryIds: [...product.subcategoryIds], imageKeys: [...new Set([...(product.mainImageKey ? [product.mainImageKey] : []), ...product.imageKeys])], specifications: [...product.specifications] } : { ...blank, categoryId: categories[0]?.id ?? 0 });
+    setUploadedMedia([]);
     setError("");
   }
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const images = String(form.get("imageKeys") ?? "").split(/\n|,/).map((key) => key.trim()).filter(Boolean);
     const specifications = String(form.get("specifications") ?? "").split("\n").map((line) => line.split("=", 2).map((part) => part.trim())).filter((parts) => parts.length === 2 && parts[0] && parts[1]).map(([name, value]) => ({ name, value }));
-    const value: Draft = { ...draft, slug: String(form.get("slug") ?? "").trim(), name: String(form.get("name") ?? "").trim(), price: String(form.get("price") ?? ""), productCode: String(form.get("productCode") ?? ""), categoryId: Number(form.get("categoryId")), sortOrder: Number(form.get("sortOrder") ?? 0), stockQuantity: Number(form.get("stockQuantity") ?? 0), lowStockThreshold: Number(form.get("lowStockThreshold") ?? 5), mainImageKey: String(form.get("mainImageKey") ?? "") || null, imageKeys: images, specifications };
+    const value: Draft = { ...draft, slug: String(form.get("slug") ?? "").trim(), name: String(form.get("name") ?? "").trim(), price: String(form.get("price") ?? ""), productCode: String(form.get("productCode") ?? ""), categoryId: Number(form.get("categoryId")), sortOrder: Number(form.get("sortOrder") ?? 0), stockQuantity: Number(form.get("stockQuantity") ?? 0), lowStockThreshold: Number(form.get("lowStockThreshold") ?? 5), specifications };
     save.mutate(value);
   }
 
@@ -45,7 +47,7 @@ export function ProductsManager() {
         <div className="grid gap-3 sm:grid-cols-2"><SelectField label="Category" name="categoryId" value={draft.categoryId || ""} required onChange={(event) => setDraft((current) => ({ ...current, categoryId: Number(event.target.value), subcategoryIds: [] }))}><option value="" disabled>Select category</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</SelectField><Field label="Price shown on site" name="price" defaultValue={draft.price} maxLength={120} /></div>
         <div className="grid gap-3 sm:grid-cols-2"><Field label="Product code" name="productCode" defaultValue={draft.productCode} maxLength={80} /><Field label="Sort order" name="sortOrder" type="number" min="0" defaultValue={draft.sortOrder} /></div>
         <div className="grid gap-3 sm:grid-cols-2"><Field label="Quantity in stock" name="stockQuantity" type="number" min="0" defaultValue={draft.stockQuantity} /><Field label="Low stock alert at" name="lowStockThreshold" type="number" min="0" defaultValue={draft.lowStockThreshold} /></div>
-        <div><label className="block text-xs font-semibold text-black/70">Main product image<select name="mainImageKey" defaultValue={draft.mainImageKey ?? ""} className="mt-2 min-h-10 w-full rounded-md border border-black/15 bg-white px-3 text-sm"><option value="">No image</option>{mediaKeys.map((key) => <option key={key} value={key}>{key}</option>)}</select></label><Field label="Gallery image keys (comma or line separated)" name="imageKeys" defaultValue={draft.imageKeys.join("\n")} list="admin-media-keys" /><datalist id="admin-media-keys">{mediaKeys.map((key) => <option key={key} value={key} />)}</datalist></div>
+        <ProductImagePicker assets={media} mainImageKey={draft.mainImageKey} imageKeys={draft.imageKeys} onChange={(images) => setDraft((current) => ({ ...current, ...images }))} onMediaUploaded={(assets) => { setUploadedMedia((current) => [...assets, ...current]); void queryClient.invalidateQueries({ queryKey: adminKeys.products }); void queryClient.invalidateQueries({ queryKey: adminKeys.media }); }} />
         <Field label="Specifications (one Name = Value per line)" name="specifications" defaultValue={draft.specifications.map(({ name, value }) => `${name} = ${value}`).join("\n")} />
         {activeCategory && activeCategory.subcategories.length > 0 && <fieldset className="rounded-md border border-black/10 p-3"><legend className="px-1 text-xs font-semibold">Subcategories</legend><div className="grid gap-2 sm:grid-cols-2">{activeCategory.subcategories.filter((sub) => sub.isPublished).map((sub) => <label key={sub.id} className="flex items-center gap-2 text-sm"><input type="checkbox" checked={draft.subcategoryIds.includes(sub.id)} onChange={(event) => setDraft((current) => ({ ...current, subcategoryIds: event.target.checked ? [...current.subcategoryIds, sub.id] : current.subcategoryIds.filter((id) => id !== sub.id) }))} />{sub.name}</label>)}</div></fieldset>}
         <div className="flex flex-wrap gap-4 text-sm"><label className="flex items-center gap-2"><input type="checkbox" checked={draft.isPublished} onChange={(event) => setDraft((current) => ({ ...current, isPublished: event.target.checked }))} />Published</label><label className="flex items-center gap-2"><input type="checkbox" checked={draft.isFeatured} onChange={(event) => setDraft((current) => ({ ...current, isFeatured: event.target.checked }))} />Featured</label></div>

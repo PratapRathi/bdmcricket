@@ -25,13 +25,13 @@ async function walk(directory: string): Promise<string[]> {
   return nested.flat();
 }
 
-async function uploadAssets(client: S3Client, bucket: string, assetPaths: string[]) {
+async function uploadAssets(client: S3Client, bucket: string, assetPaths: string[], sourceDirectory: string) {
   let completed = 0;
   const concurrency = 8;
   for (let start = 0; start < assetPaths.length; start += concurrency) {
     const group = assetPaths.slice(start, start + concurrency);
     await Promise.all(group.map(async (filePath) => {
-      const relativePath = path.relative("public", filePath).split(path.sep).join("/");
+      const relativePath = path.relative(sourceDirectory, filePath).split(path.sep).join("/");
       const key = `site/${relativePath}`;
       const file = await stat(filePath);
       await client.send(new PutObjectCommand({
@@ -63,12 +63,18 @@ async function main() {
 
   try {
     await database.$queryRaw`SELECT 1`;
-    const assetPaths = await walk(path.join(process.cwd(), "public"));
+    // The deployed application has no local media. This one-time importer reads
+    // the retained original site clone (or MEDIA_IMPORT_DIRECTORY) instead.
+    const sourceDirectory = process.env.MEDIA_IMPORT_DIRECTORY
+      ? path.resolve(process.env.MEDIA_IMPORT_DIRECTORY)
+      : path.resolve(process.cwd(), "../bdmcricket");
+    const assetDirectory = path.join(sourceDirectory, "assets");
+    const assetPaths = await walk(assetDirectory);
     console.log(`Found ${assetPaths.length} image assets to migrate.`);
-    await uploadAssets(storage, config.bucket, assetPaths);
+    await uploadAssets(storage, config.bucket, assetPaths, sourceDirectory);
 
     const assetRecords = await Promise.all(assetPaths.map(async (filePath) => {
-      const relativePath = path.relative("public", filePath).split(path.sep).join("/");
+      const relativePath = path.relative(sourceDirectory, filePath).split(path.sep).join("/");
       const file = await stat(filePath);
       return {
         key: `site/${relativePath}`,
