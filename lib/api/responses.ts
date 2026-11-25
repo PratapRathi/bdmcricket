@@ -6,5 +6,5 @@ export function jsonSuccess<T>(data: T, init?: ResponseInit) {
 }
 
 export function jsonError(code: string, message: string, status: number) {
-  return Response.json({ error: { code, message } } satisfies ApiErrorBody, { status });
+  return Response.json({ error: { code, message } } satisfies ApiErrorBody, { status, headers: { "Cache-Control": "no-store, private" } });
 }

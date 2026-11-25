@@ -14,6 +14,12 @@
 4. If setting up the original content, run `npm run data:migrate` to upload/register media and import source records.
 5. Run `npm run dev`.
 
+## Create the first administrator
+
+Admin login intentionally has no seeded or default credentials. Set a private `ADMIN_SESSION_SECRET` of at least 32 bytes and choose `ADMIN_BOOTSTRAP_USERNAME` and `ADMIN_BOOTSTRAP_PASSWORD` (14–128 characters) in the local environment. Set `APP_ORIGIN` to the exact origin used by the browser, then run `npm run admin:bootstrap` once. Remove `ADMIN_BOOTSTRAP_PASSWORD` from the environment afterward. The bootstrap command refuses to create a second administrator; use `/admin/settings` to rotate credentials.
+
+The admin database migration adds stock fields, administrator/audit tables, and contact submissions. Apply it with `npm run db:migrate` before bootstrapping. Admin media upload also requires the configured S3 bucket.
+
 Do not commit `.env` or expose server-only settings to client code. `npm run db:seed` seeds content records when media assets are already registered; rerun `data:migrate` only when the source import is intended.
 
 ## Quality commands

@@ -2,42 +2,43 @@
 
 ## Overview
 
-BDM Cricket is a Next.js 16 App Router application. The App Router owns the public page structure. PostgreSQL is the source of current product and company content through Prisma 7. S3-compatible storage holds the site media; the server streams registered media through `/media/*`.
+BDM Cricket is a Next.js 16 App Router application. PostgreSQL is the source of product, category, company, and contact data through Prisma 7. S3-compatible storage holds the registered site media. The code owns all website routes; database records provide content for those routes and for genuine dynamic resources such as products and admin-created categories.
 
 ```text
-Browser
-  ├─ page navigation ──> explicit App Router pages ──> Server Components ──> Prisma/PostgreSQL
-  ├─ product filters ──> TanStack Query ──> GET /api/products ──> product data service ──> Prisma
-  └─ images/video ─────> /media/* Route Handler ──> S3-compatible storage
+Public browser ──> (website) filesystem routes ──> Server Components ──> Prisma/PostgreSQL
+       │                     │
+       ├─ interactive browse ─> TanStack Query ─> /api/products ───────┘
+       └─ contact form ──────> /api/contact ─────> ContactSubmission
+
+Admin browser ──> /admin protected route group ─> admin feature screens
+       │                                     └─> /api/admin/* ─> services ─> Prisma/S3
+       └─ signed HttpOnly cookie; every API request rechecks the admin record
+
+Images ──> /media/* Route Handler ──> S3-compatible object storage
 ```
 
 ## Boundaries
 
-- `app/` owns URLs, metadata, loading/error/not-found boundaries, API handlers, and metadata routes.
-- `components/layout/` owns the shared header, footer, and server-data bridge. Shared low-level controls live in `components/ui/`.
-- `features/home/components/`, `features/products/components/`, `features/company/components/`, and `features/media/components/` hold their current presentation modules.
-- `features/products/` owns browser-side products API types, client API service, and TanStack Query hooks.
-- `lib/data/` is server-only Prisma access and maps database records to UI types. Server components call it directly when rendering.
-- `lib/api/` provides the shared browser request client and consistent JSON response helpers.
-- `lib/config/site-routes.ts` is the source-controlled list of page routes and verified historical redirects. It does not use database rows.
-- `prisma/` owns the schema, checked-in migrations, and source import fixtures. `lib/object-storage.ts` and `lib/prisma.ts` keep external clients server-side.
-
-There is no nested route group because all current website pages share the same header, footer, and visual shell. Add a route group when a section gets a distinct layout or security boundary. Product pages share a visual feature but currently need no nested layout.
+- `app/` owns explicit public and admin pages, route layouts, metadata, error/loading/not-found boundaries, API handlers, and sitemap/robots metadata.
+- `app/(website)/` groups public pages under the shared header, transition, and footer. The route group name is not part of the URL.
+- `app/admin/(portal)/` applies server-side authentication and the admin navigation shell. `/admin/login` is outside that protected group.
+- `features/admin/` owns admin UI, input schemas, client query keys, and server-side management services. It does not own route definitions.
+- `features/home`, `features/products`, `features/company`, and `features/media` own existing public presentation modules. The existing public visual system remains in place.
+- `components/layout/`, `components/ui/`, and `components/motion/` own cross-feature chrome, controls, and animation utilities.
+- `lib/data/` contains server-only reads and public data mapping. `lib/admin-auth/` owns password/session/guard/audit helpers. `lib/api/` owns the browser request client and response shapes.
+- `prisma/` owns the database schema and additive migrations. `lib/object-storage.ts` and `lib/prisma.ts` keep external clients server-side.
 
 ## Decisions
 
-- Route existence is defined by files under `app/`, not product, editorial, or redirect records.
-- Product detail slugs remain dynamic because products are data-managed resources.
-- Product and company content remains in PostgreSQL to support future management workflows.
-- Static page copy and SEO fields may be edited in `EditorialPage` records, but those records only fill content for known routes.
-- Server Components use server-only services directly. Client components use the API for interactive server-state.
-- TanStack Query owns the client product list cache. Zustand is not installed because the current UI has no cross-component client state that merits a store.
-- API scope currently covers public interactive product browsing. No admin, contact submission, cart, or mutation behavior is implemented.
+- Filesystem routes, not database rows, determine which website pages exist. Editorial content can change copy or visibility only for an existing route.
+- Product detail paths (`/products/[slug]`) represent database products. The six established category paths remain `/bats`, `/balls`, `/kit-bag`, `/protective-gear`, `/accessories`, and `/clothing`. Admin-created categories use `/products/categories/[slug]`.
+- Server Components call Prisma-backed services directly for initial page rendering. Interactive client screens use TanStack Query and same-origin Route Handlers.
+- Admin APIs require a signed session and a same-origin check on writes. Sensitive API responses are private/no-store. Admin changes are written to `AdminAuditLog` in the same transaction as their database changes where applicable.
+- Contact submissions are stored in PostgreSQL and visible only to authenticated admin handlers. Media uploads are registered in `MediaAsset`; in-use assets cannot be removed.
+- TanStack Query manages client server-state. Zustand is not installed because the application has no global client state that merits a separate store.
 
-## Request flow
+## Request flow and failure handling
 
-The browser requests an explicit route. The page renders through Server Components and reads the required records from `lib/data/`. The product browser is a Client Component because it owns interactive controls; its filter state forms a TanStack Query key and requests validated results from `/api/products`. No browser code imports Prisma or S3 credentials.
+Public page routes read content on the server through `lib/data/`. The product browser requests validated filtered results from `/api/products`; the contact form submits validated data to `/api/contact`. Admin pages render only after a server session check and call protected handlers through the shared API client. Admin services validate relational constraints and record an audit entry.
 
-## Failure handling
-
-Unknown pages use `app/not-found.tsx`. Route rendering errors use `app/error.tsx`; root layout errors use `app/global-error.tsx`. `app/loading.tsx` is the shared route loading state. The products handler returns `{ data }` for success and `{ error: { code, message } }` for failure.
+Unknown routes use `app/not-found.tsx`; render errors use `app/error.tsx`; root layout failures use `app/global-error.tsx`. The website and admin route trees each have a layout; root `app/loading.tsx` provides the shared loading state. API handlers return consistent JSON errors except for CSV export and media responses.

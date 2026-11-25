@@ -6,6 +6,7 @@ import type { Product, ProductCategory } from "@/features/products/types/product
 import { ProductBrowser } from "@/features/products/components/product-browser";
 import { ProductCard } from "@/features/products/components/product-card";
 import { ButtonLink } from "@/components/ui/button-link";
+import { getCategoryHref } from "@/lib/config/category-route";
 
 export async function CategoryPage({ slug }: { slug: string }) {
   const [category, collection] = await Promise.all([getCategoryBySlug(slug), getProductsByCategorySlug(slug)]);
@@ -94,12 +95,12 @@ export async function ProductHubPage() {
 function CategoryHubCard({ category, product, index }: { category: ProductCategory; product?: Product; index: number }) {
   return (
     <article className={`hub-category hub-category-${(index % 4) + 1} p-4 sm:p-6`}>
-      <Link href={`/${category.slug}`} className="group block">
+      <Link href={getCategoryHref(category.slug)} className="group block">
         {product && <div className="relative mb-4 h-48 sm:h-64"><Image src={product.image} alt="" fill sizes="(max-width: 640px) 100vw, 33vw" className="object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-105" /></div>}
         <div className="flex items-end justify-between gap-2"><div><h2 className="font-display text-2xl font-semibold leading-tight tracking-[-0.04em]">{category.name}</h2><p className="mt-1 text-xs text-ink/55">{category.count} products</p></div><span aria-hidden="true" className="text-brand-red">↗</span></div>
       </Link>
       <div className="mt-4 flex flex-wrap gap-2 border-t border-ink/10 pt-4">
-        {category.subcategories.map((subcategory) => <Link key={subcategory.slug} href={`/${category.slug}#${subcategory.slug}`} className="rounded-full border border-ink/10 px-3 py-1.5 text-[10px] font-medium text-ink/60 transition-colors hover:border-ink hover:text-ink">{subcategory.name}</Link>)}
+        {category.subcategories.map((subcategory) => <Link key={subcategory.slug} href={`${getCategoryHref(category.slug)}#${subcategory.slug}`} className="rounded-full border border-ink/10 px-3 py-1.5 text-[10px] font-medium text-ink/60 transition-colors hover:border-ink hover:text-ink">{subcategory.name}</Link>)}
       </div>
     </article>
   );

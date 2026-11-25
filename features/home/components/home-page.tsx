@@ -10,6 +10,7 @@ import { VideoFeature } from "@/features/media/components/video-feature";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { getCategoryHref } from "@/lib/config/category-route";
 
 export async function HomePage() {
   const [featureCategories, products, content] = await Promise.all([getCategories(), getProducts(), getCompanyContent()]);
@@ -24,7 +25,7 @@ export async function HomePage() {
       <section className="category-ticker" aria-label="Shop product categories">
         <div className="category-ticker-track">
           {[...featureCategories, ...featureCategories].map((category, index) => (
-            <Link key={`${category.slug}-${index}`} href={`/${category.slug}`} className="ticker-item">{category.name}<span aria-hidden="true">✳</span></Link>
+            <Link key={`${category.slug}-${index}`} href={getCategoryHref(category.slug)} className="ticker-item">{category.name}<span aria-hidden="true">✳</span></Link>
           ))}
         </div>
       </section>
@@ -43,7 +44,7 @@ export async function HomePage() {
               const product = products.find((item) => item.categorySlug === category.slug);
               return (
                 <Reveal key={category.slug} delay={index * 60} className={`category-card category-card-${index + 1}`}>
-                  <Link href={`/${category.slug}`} className="group relative flex min-h-[260px] flex-col overflow-hidden p-4 sm:min-h-[360px] sm:p-6 lg:min-h-[440px]">
+                  <Link href={getCategoryHref(category.slug)} className="group relative flex min-h-[260px] flex-col overflow-hidden p-4 sm:min-h-[360px] sm:p-6 lg:min-h-[440px]">
                     <div className="relative z-10 flex items-start justify-between gap-2">
                       <span className="category-index">0{index + 1} / 06</span>
                       <span className="category-arrow" aria-hidden="true">↗</span>
@@ -134,7 +135,7 @@ export async function HomePage() {
         </div>
       </section>
 
-      <section className="section-pad bg-white">
+      {newsNotice.isPublished && <section className="section-pad bg-white">
         <div className="mx-auto grid max-w-[1440px] gap-10 px-5 sm:px-8 lg:grid-cols-[1fr_1fr] lg:gap-20 lg:px-12">
           <div>
             <p className="eyebrow text-brand-red">Latest from BDM</p>
@@ -148,7 +149,7 @@ export async function HomePage() {
             <span className="mt-7 inline-flex items-center gap-3 text-sm font-semibold">Read the notice <span className="transition-transform group-hover:translate-x-1">→</span></span>
           </Link>
         </div>
-      </section>
+      </section>}
 
       <section className="final-cta">
         <div className="mx-auto flex max-w-[1440px] flex-col items-start justify-between gap-8 px-5 py-16 sm:px-8 lg:flex-row lg:items-end lg:px-12 lg:py-24">

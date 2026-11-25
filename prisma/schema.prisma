@@ -53,6 +53,8 @@ model Product {
   isFeatured      Boolean                       @default(false)
   featuredSortOrder Int?
   isImportPending Boolean                       @default(false)
+  stockQuantity   Int                           @default(0)
+  lowStockThreshold Int                         @default(5)
   specifications  ProductSpecification[]
   images          ProductImage[]
   subcategories   ProductSubcategoryAssignment[]
@@ -61,6 +63,7 @@ model Product {
 
   @@index([categoryId, sortOrder])
   @@index([isPublished, sortOrder])
+  @@index([stockQuantity, isPublished])
 }
 
 model ProductSubcategoryAssignment {
@@ -218,4 +221,54 @@ model EditorialPage {
   isPublished     Boolean  @default(true)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+}
+
+enum ContactStatus {
+  NEW
+  IN_PROGRESS
+  RESOLVED
+}
+
+model AdminUser {
+  id                   String           @id @default(cuid())
+  username             String           @unique
+  passwordHash         String
+  isActive             Boolean          @default(true)
+  sessionVersion       Int              @default(0)
+  failedLoginAttempts  Int              @default(0)
+  lockedUntil          DateTime?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  auditLogs            AdminAuditLog[]
+}
+
+model AdminAuditLog {
+  id         String    @id @default(cuid())
+  actorId    String?
+  actor      AdminUser? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  action     String
+  entityType String
+  entityId   String
+  summary    String
+  createdAt  DateTime  @default(now())
+
+  @@index([actorId, createdAt])
+  @@index([entityType, entityId, createdAt])
+}
+
+model ContactSubmission {
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  phone     String        @default("")
+  subject   String
+  message   String
+  status    ContactStatus @default(NEW)
+  adminNotes String       @default("")
+  ipHash    String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([status, createdAt])
+  @@index([ipHash, createdAt])
 }

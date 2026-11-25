@@ -6,17 +6,18 @@ import { useEffect, useRef, useState } from "react";
 import type { ProductCategory } from "@/features/products/types/product.types";
 import type { getCompanyContent } from "@/lib/data/company";
 import { ButtonLink } from "@/components/ui/button-link";
+import { getCategoryHref } from "@/lib/config/category-route";
 
 type HeaderProps = { categories: ProductCategory[]; company: Awaited<ReturnType<typeof getCompanyContent>>["company"] };
 
 function ProductMenuCategory({ category }: { category: ProductCategory }) {
   return (
     <div>
-      <Link href={`/${category.slug}`} className="group flex items-center justify-between border-b border-ink/10 py-2 text-sm font-semibold text-ink/80 transition-colors hover:text-brand-red">
+      <Link href={getCategoryHref(category.slug)} className="group flex items-center justify-between border-b border-ink/10 py-2 text-sm font-semibold text-ink/80 transition-colors hover:text-brand-red">
         <span>{category.name}</span><span aria-hidden="true" className="translate-x-[-4px] opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100">↗</span>
       </Link>
       <div className="mt-1 flex flex-col">
-        {category.subcategories.map((subcategory) => <Link key={subcategory.slug} href={`/${category.slug}#${subcategory.slug}`} className="py-1.5 text-xs text-ink/55 transition-colors hover:text-brand-red">{subcategory.name}</Link>)}
+        {category.subcategories.map((subcategory) => <Link key={subcategory.slug} href={`${getCategoryHref(category.slug)}#${subcategory.slug}`} className="py-1.5 text-xs text-ink/55 transition-colors hover:text-brand-red">{subcategory.name}</Link>)}
       </div>
     </div>
   );
@@ -140,9 +141,9 @@ export function Header({ categories, company }: HeaderProps) {
           <Link href="/products" className="mobile-nav-link">All products <span>↗</span></Link>
           {categories.map((category) => (
             <div key={category.slug} className="border-b border-ink/10 pb-3">
-              <Link href={`/${category.slug}`} className="mobile-nav-link">{category.name}<span>↗</span></Link>
+              <Link href={getCategoryHref(category.slug)} className="mobile-nav-link">{category.name}<span>↗</span></Link>
               <div className="grid grid-cols-2 gap-x-4">
-                {category.subcategories.map((subcategory) => <Link key={subcategory.slug} href={`/${category.slug}#${subcategory.slug}`} className="mobile-nav-sub">{subcategory.name}</Link>)}
+                {category.subcategories.map((subcategory) => <Link key={subcategory.slug} href={`${getCategoryHref(category.slug)}#${subcategory.slug}`} className="mobile-nav-sub">{subcategory.name}</Link>)}
               </div>
             </div>
           ))}

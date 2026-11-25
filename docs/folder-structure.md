@@ -1,9 +1,13 @@
 # Folder structure
 
 ```text
-app/                         Explicit public routes, API handlers, SEO and boundaries
+app/                         Explicit public/admin routes, APIs, SEO and boundaries
+  (website)/                 Public pages with shared site chrome
+  admin/                     Login and protected admin route group
+  api/admin/                 Protected management Route Handlers
   api/products/route.ts      Validated catalogue API
-  products/[slug]/           Dynamic product detail only
+  products/[slug]/           Dynamic product detail
+  products/categories/[slug]/ Admin-created category records
   media/[...key]/            Object storage media handler
 components/
   layout/                    Shared header, footer, data bridge
@@ -19,9 +23,14 @@ features/
     services/                Browser-side product API service
     types/                   Product domain and API contracts
     validation/              Zod query validation
+  admin/
+    components/              Dashboard, catalog, content, inbox, media, and settings screens
+    services/                Server-only catalog/content management logic
+    validation/              Zod admin request schemas
 lib/
   api/                       JSON response helpers and browser HTTP client
   config/                    Static route and alias configuration
+  admin-auth/                Session, password, guard, and audit helpers
   data/                      Server-only Prisma access/mapping
   seo/                       Shared page metadata helpers
   object-storage.ts          Server-only S3-compatible client

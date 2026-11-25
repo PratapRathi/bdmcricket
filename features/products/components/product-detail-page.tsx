@@ -5,6 +5,7 @@ import { ProductCard } from "@/features/products/components/product-card";
 import { ProductGallery } from "@/features/products/components/product-gallery";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Reveal } from "@/components/ui/reveal";
+import { getCategoryHref } from "@/lib/config/category-route";
 
 export async function ProductDetailPage({ slug }: { slug: string }) {
   const product = await getProductBySlug(slug);
@@ -22,7 +23,7 @@ export async function ProductDetailPage({ slug }: { slug: string }) {
     <>
       <section className="bg-paper">
         <div className="mx-auto max-w-[1440px] px-5 py-8 sm:px-8 lg:px-12">
-          <p className="text-xs font-medium text-ink/45"><Link href="/products" className="hover:text-brand-red">Equipment</Link><span className="mx-2">/</span><Link href={`/${product.categorySlug}`} className="hover:text-brand-red">{category?.name ?? product.category}</Link>{subcategories[0] && <><span className="mx-2">/</span><Link href={`/${product.categorySlug}#${subcategories[0].slug}`} className="hover:text-brand-red">{subcategories[0].name}</Link></>}<span className="mx-2">/</span><span className="text-ink/75">{product.name}</span></p>
+          <p className="text-xs font-medium text-ink/45"><Link href="/products" className="hover:text-brand-red">Equipment</Link><span className="mx-2">/</span><Link href={getCategoryHref(product.categorySlug)} className="hover:text-brand-red">{category?.name ?? product.category}</Link>{subcategories[0] && <><span className="mx-2">/</span><Link href={`${getCategoryHref(product.categorySlug)}#${subcategories[0].slug}`} className="hover:text-brand-red">{subcategories[0].name}</Link></>}<span className="mx-2">/</span><span className="text-ink/75">{product.name}</span></p>
           <div className="mt-8 grid gap-10 lg:grid-cols-[1.08fr_0.92fr] lg:gap-16">
             <Reveal className="min-w-0"><ProductGallery product={product} /></Reveal>
             <Reveal className="flex flex-col justify-center pb-8 lg:py-12">
@@ -37,7 +38,7 @@ export async function ProductDetailPage({ slug }: { slug: string }) {
           </div>
         </div>
       </section>
-      {related.length > 0 && <section className="section-pad bg-white"><div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12"><div className="flex items-end justify-between gap-6"><div><p className="eyebrow text-brand-red">Continue exploring</p><h2 className="mt-4 font-display text-4xl font-semibold tracking-[-0.06em]">More from {relatedHeading}.</h2></div><Link href={`/${product.categorySlug}`} className="hidden text-sm font-semibold hover:text-brand-red sm:block">View {category?.name ?? "category"} ↗</Link></div><div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6">{related.map((item,index)=><ProductCard key={item.slug} product={item} index={index}/>)}</div></div></section>}
+      {related.length > 0 && <section className="section-pad bg-white"><div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12"><div className="flex items-end justify-between gap-6"><div><p className="eyebrow text-brand-red">Continue exploring</p><h2 className="mt-4 font-display text-4xl font-semibold tracking-[-0.06em]">More from {relatedHeading}.</h2></div><Link href={getCategoryHref(product.categorySlug)} className="hidden text-sm font-semibold hover:text-brand-red sm:block">View {category?.name ?? "category"} ↗</Link></div><div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6">{related.map((item,index)=><ProductCard key={item.slug} product={item} index={index}/>)}</div></div></section>}
     </>
   );
 }

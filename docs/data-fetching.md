@@ -10,6 +10,12 @@ Server Components call server-only functions in `lib/data/`. The catalog module 
 
 The API validates `q`, `category`, `subcategory`, and `sort` with Zod. `getProductsForBrowser` filters published catalog rows and related specifications in PostgreSQL, maps the result to the same product type used in server-rendered cards, and preserves existing sort semantics. Price values are stored as display strings today, so price ordering parses those strings after the database query. If catalogue size grows substantially, add a normalized numeric price field and cursor pagination as part of product pricing/inventory design.
 
+## Admin client data
+
+`features/admin/components/admin-api.ts` centralizes protected client requests and query keys. Admin screens query `/api/admin/*` through TanStack Query; they do not import Prisma or S3 code. Mutations invalidate the narrow related keys (`admin/products`, `admin/categories`, `admin/content`, `admin/enquiries`, `admin/media`, and `admin/overview`). The authenticated admin layout performs the initial session check, and each API request verifies the cookie again.
+
+The public contact form posts to `/api/contact`. It does not use TanStack Query because it is a one-off submission rather than data that needs a shared client cache.
+
 ## Prefetching and hydration
 
 The current first-page browser uses server-provided initial query data; full Query dehydration is unnecessary. Do not add hydration boundaries around static Server Component content. If future routes need interactive client data on first paint, prefetch on the server and dehydrate only that feature's query state.

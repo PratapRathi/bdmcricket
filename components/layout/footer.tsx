@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ProductCategory } from "@/features/products/types/product.types";
 import type { getCompanyContent } from "@/lib/data/company";
+import { getCategoryHref } from "@/lib/config/category-route";
 
 type FooterProps = { categories: ProductCategory[]; company: Awaited<ReturnType<typeof getCompanyContent>>["company"] };
 
@@ -30,7 +31,7 @@ export function Footer({ categories, company }: FooterProps) {
           <div>
             <p className="eyebrow text-white/45">Categories</p>
             <ul className="mt-5 space-y-3 text-sm text-white/75">
-              {categories.map((category) => <li key={category.slug}><Link className="footer-link" href={`/${category.slug}`}>{category.name}</Link></li>)}
+              {categories.map((category) => <li key={category.slug}><Link className="footer-link" href={getCategoryHref(category.slug)}>{category.name}</Link></li>)}
             </ul>
           </div>
           <div>

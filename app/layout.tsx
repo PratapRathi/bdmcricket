@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
-import "./globals.css";
-import { SiteFooter, SiteHeader } from "@/components/layout/site-chrome-data";
-import { RouteTransition } from "@/components/motion/route-transition";
 import { QueryProvider } from "@/providers/query-provider";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "BDM Cricket Solutions",
@@ -22,12 +19,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en">
       <body>
-        <QueryProvider>
-          <a className="skip-link" href="#main-content">Skip to content</a>
-          <Suspense fallback={<div className="h-[76px] bg-paper lg:h-[84px]" />}><SiteHeader /></Suspense>
-          <main id="main-content"><Suspense fallback={<div className="route-transition">{children}</div>}><RouteTransition>{children}</RouteTransition></Suspense></main>
-          <Suspense fallback={<div className="h-32 bg-ink" />}><SiteFooter /></Suspense>
-        </QueryProvider>
+        <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
   );

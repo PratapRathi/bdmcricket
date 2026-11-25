@@ -54,6 +54,7 @@ export const getCompanyContent = cache(async () => {
       distribution: ratingBreakdown.map(({ stars, percent }) => ({ stars, percent })),
     },
     newsNotice: {
+      isPublished: notice.isPublished,
       title: notice.title,
       body: notice.body,
       accountName: notice.accountName,
